@@ -68,21 +68,26 @@ $(document).ready(function() {
 });
 
 function showAlert(message, type) {
-    const alertClass = type === 'success' ? 'success' : 'danger';
     const bgColor = type === 'success' ? 'var(--success)' : 'var(--danger)';
     
+    // Show all messages as toast notifications at bottom right
     const alert = $('<div>')
         .css({
-            padding: '0.75rem 1rem',
-            marginBottom: '1rem',
+            position: 'fixed',
+            bottom: '2rem',
+            right: '2rem',
+            padding: '1rem 1.5rem',
             borderRadius: '8px',
             backgroundColor: bgColor,
             color: 'white',
-            fontSize: '0.875rem'
+            fontSize: '0.875rem',
+            zIndex: 9999,
+            boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+            maxWidth: '400px'
         })
         .text(message);
     
-    $('#alert-container').html(alert);
+    $('body').append(alert);
     
     setTimeout(function() {
         alert.fadeOut(function() {

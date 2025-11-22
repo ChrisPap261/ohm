@@ -104,7 +104,7 @@ function showAlert(message, type = 'info') {
     const alert = $('<div>')
         .css({
             position: 'fixed',
-            top: '2rem',
+            bottom: '2rem',
             right: '2rem',
             padding: '1rem 1.5rem',
             borderRadius: '8px',

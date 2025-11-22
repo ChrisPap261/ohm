@@ -44,30 +44,30 @@ function loadHarvests() {
                     <button class="modal-close" onclick="closeHarvestModal()">&times;</button>
                 </div>
                 <div class="modal-body">
-                    <form id="harvest-form">
+                    <form id="harvest-form" autocomplete="off">
                         <input type="hidden" id="harvest-id">
                         <div class="form-group">
                             <label class="form-label" for="harvest-field">Αγροτεμάχιο *</label>
-                            <select id="harvest-field" class="form-select" required>
+                            <select id="harvest-field" class="form-select" autocomplete="off" required>
                                 <option value="">Επιλέξτε αγροτεμάχιο</option>
                             </select>
                         </div>
                         <div class="form-group">
                             <label class="form-label" for="harvest-date">Ημερομηνία *</label>
-                            <input type="date" id="harvest-date" class="form-control" required>
+                            <input type="date" id="harvest-date" class="form-control" autocomplete="off" required>
                         </div>
                         <div class="form-group">
                             <label class="form-label" for="harvest-crates">Τελάρα *</label>
-                            <input type="number" id="harvest-crates" class="form-control" required min="0">
+                            <input type="number" id="harvest-crates" class="form-control" autocomplete="off" required min="0">
                         </div>
                         <div class="form-group">
                             <label class="form-label" for="harvest-kg">Κιλά Ελιών *</label>
-                            <input type="number" id="harvest-kg" class="form-control" required min="0">
+                            <input type="number" id="harvest-kg" class="form-control" autocomplete="off" required min="0">
                             <small class="form-text text-muted">Προσυμπληρώνεται αυτόματα (Τελάρα × 22.5), μπορείτε να το αλλάξετε</small>
                         </div>
                         <div class="form-group">
                             <label class="form-label" for="harvest-notes">Σημειώσεις</label>
-                            <textarea id="harvest-notes" class="form-control" rows="3"></textarea>
+                            <textarea id="harvest-notes" class="form-control" rows="3" autocomplete="off"></textarea>
                         </div>
                     </form>
                 </div>

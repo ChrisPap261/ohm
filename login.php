@@ -31,15 +31,15 @@ if ($auth->isLoggedIn()) {
             
             <div id="alert-container"></div>
             
-            <form id="login-form">
+            <form id="login-form" autocomplete="off">
                 <div class="form-group">
                     <label class="form-label" for="username">Όνομα Χρήστη</label>
-                    <input type="text" id="username" name="username" class="form-control" required>
+                    <input type="text" id="username" name="username" class="form-control" autocomplete="off" required>
                 </div>
                 
                 <div class="form-group">
                     <label class="form-label" for="password">Κωδικός</label>
-                    <input type="password" id="password" name="password" class="form-control" required>
+                    <input type="password" id="password" name="password" class="form-control" autocomplete="off" required>
                 </div>
                 
                 <button type="submit" class="btn btn-primary" style="width: 100%;">

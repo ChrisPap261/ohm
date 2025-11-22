@@ -31,30 +31,30 @@ if ($auth->isLoggedIn()) {
             
             <div id="alert-container"></div>
             
-            <form id="register-form">
+            <form id="register-form" autocomplete="off">
                 <div class="form-group">
                     <label class="form-label" for="full_name">Ονοματεπώνυμο</label>
-                    <input type="text" id="full_name" name="full_name" class="form-control" required>
+                    <input type="text" id="full_name" name="full_name" class="form-control" autocomplete="off" required>
                 </div>
                 
                 <div class="form-group">
                     <label class="form-label" for="username">Όνομα Χρήστη</label>
-                    <input type="text" id="username" name="username" class="form-control" required>
+                    <input type="text" id="username" name="username" class="form-control" autocomplete="off" required>
                 </div>
                 
                 <div class="form-group">
                     <label class="form-label" for="email">Email</label>
-                    <input type="email" id="email" name="email" class="form-control" required>
+                    <input type="email" id="email" name="email" class="form-control" autocomplete="off" required>
                 </div>
                 
                 <div class="form-group">
                     <label class="form-label" for="password">Κωδικός</label>
-                    <input type="password" id="password" name="password" class="form-control" required minlength="6">
+                    <input type="password" id="password" name="password" class="form-control" autocomplete="off" required minlength="6">
                 </div>
                 
                 <div class="form-group">
                     <label class="form-label" for="password_confirm">Επιβεβαίωση Κωδικού</label>
-                    <input type="password" id="password_confirm" name="password_confirm" class="form-control" required minlength="6">
+                    <input type="password" id="password_confirm" name="password_confirm" class="form-control" autocomplete="off" required minlength="6">
                 </div>
                 
                 <button type="submit" class="btn btn-primary" style="width: 100%;">

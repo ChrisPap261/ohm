@@ -39,15 +39,15 @@ function loadCustomers() {
                     <button class="modal-close" onclick="closeCustomerModal()">&times;</button>
                 </div>
                 <div class="modal-body">
-                    <form id="customer-form">
+                    <form id="customer-form" autocomplete="off">
                         <input type="hidden" id="customer-id">
                         <div class="form-group">
                             <label class="form-label" for="customer-name">Ονοματεπώνυμο *</label>
-                            <input type="text" id="customer-name" class="form-control" required>
+                            <input type="text" id="customer-name" class="form-control" autocomplete="off" required>
                         </div>
                         <div class="form-group">
                             <label class="form-label" for="customer-phone">Τηλέφωνο</label>
-                            <input type="tel" id="customer-phone" class="form-control">
+                            <input type="tel" id="customer-phone" class="form-control" autocomplete="off">
                         </div>
                     </form>
                 </div>

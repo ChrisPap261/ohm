@@ -95,30 +95,30 @@ function loadOilSales() {
                     <button class="modal-close" onclick="closeOilSaleModal()">&times;</button>
                 </div>
                 <div class="modal-body">
-                    <form id="oil-sale-form">
+                    <form id="oil-sale-form" autocomplete="off">
                         <input type="hidden" id="oil-sale-id">
                         <div class="form-group">
                             <label class="form-label" for="oil-sale-date">Ημερομηνία *</label>
-                            <input type="date" id="oil-sale-date" class="form-control" required>
+                            <input type="date" id="oil-sale-date" class="form-control" autocomplete="off" required>
                         </div>
                         <div class="form-group">
                             <label class="form-label" for="oil-sale-liters">Λίτρα Λαδιού *</label>
-                            <input type="number" id="oil-sale-liters" class="form-control" required min="0">
+                            <input type="number" id="oil-sale-liters" class="form-control" autocomplete="off" required min="0">
                             <small class="form-text text-muted">Κιλά = Λίτρα ÷ 1.1</small>
                         </div>
                         <div class="form-group">
                             <label class="form-label" for="oil-sale-price">Τιμή ανά Λίτρο (€) *</label>
-                            <input type="number" id="oil-sale-price" class="form-control" required min="0" step="0.01">
+                            <input type="number" id="oil-sale-price" class="form-control" autocomplete="off" required min="0" step="0.01">
                         </div>
                         <div class="form-group">
                             <label class="form-label" for="oil-sale-customer">Αγοραστής</label>
                             <input type="hidden" id="oil-sale-customer-id">
-                            <input type="text" id="oil-sale-customer" class="form-control" placeholder="Πληκτρολογήστε για αναζήτηση...">
+                            <input type="text" id="oil-sale-customer" class="form-control" placeholder="Πληκτρολογήστε για αναζήτηση..." autocomplete="off">
                             <div id="customer-dropdown" class="autocomplete-dropdown" style="display: none;"></div>
                         </div>
                         <div class="form-group">
                             <label class="form-label" for="oil-sale-notes">Σημειώσεις</label>
-                            <textarea id="oil-sale-notes" class="form-control" rows="3"></textarea>
+                            <textarea id="oil-sale-notes" class="form-control" rows="3" autocomplete="off"></textarea>
                         </div>
                     
                         <div class="form-group">

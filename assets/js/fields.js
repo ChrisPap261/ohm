@@ -41,23 +41,23 @@ function loadFields() {
                     <button class="modal-close" onclick="closeFieldModal()">&times;</button>
                 </div>
                 <div class="modal-body">
-                    <form id="field-form">
+                    <form id="field-form" autocomplete="off">
                         <input type="hidden" id="field-id">
                         <div class="form-group">
                             <label class="form-label" for="field-name">Όνομα *</label>
-                            <input type="text" id="field-name" class="form-control" required>
+                            <input type="text" id="field-name" class="form-control" autocomplete="off" required>
                         </div>
                         <div class="form-group">
                             <label class="form-label" for="field-location">Τοποθεσία</label>
-                            <input type="text" id="field-location" class="form-control">
+                            <input type="text" id="field-location" class="form-control" autocomplete="off">
                         </div>
                         <div class="form-group">
                             <label class="form-label" for="field-area">Έκταση (τ.μ.)</label>
-                            <input type="number" id="field-area" class="form-control">
+                            <input type="number" id="field-area" class="form-control" autocomplete="off">
                         </div>
                         <div class="form-group">
                             <label class="form-label" for="field-tree-count">Αριθμός Δέντρων</label>
-                            <input type="number" id="field-tree-count" class="form-control">
+                            <input type="number" id="field-tree-count" class="form-control" autocomplete="off">
                         </div>
                     </form>
                 </div>

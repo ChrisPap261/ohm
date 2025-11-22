@@ -44,33 +44,33 @@ function loadMill() {
                     <button class="modal-close" onclick="closeMillModal()">&times;</button>
                 </div>
                 <div class="modal-body">
-                    <form id="mill-form">
+                    <form id="mill-form" autocomplete="off">
                         <input type="hidden" id="mill-id">
                         <div class="form-group">
                             <label class="form-label" for="mill-date">Ημερομηνία *</label>
-                            <input type="date" id="mill-date" class="form-control" required>
+                            <input type="date" id="mill-date" class="form-control" autocomplete="off" required>
                         </div>
                         <div class="form-group">
                             <label class="form-label" for="mill-crates">Τελάρα</label>
-                            <input type="number" id="mill-crates" class="form-control" min="0">
+                            <input type="number" id="mill-crates" class="form-control" autocomplete="off" min="0">
                         </div>
                         <div class="form-group">
                             <label class="form-label" for="mill-olives-kg">Κιλά Ελιών *</label>
-                            <input type="number" id="mill-olives-kg" class="form-control" required min="0">
+                            <input type="number" id="mill-olives-kg" class="form-control" autocomplete="off" required min="0">
                             <small class="form-text text-muted">Προσυμπληρώνεται αυτόματα (Τελάρα × 22.5), μπορείτε να το αλλάξετε</small>
                         </div>
                         <div class="form-group">
                             <label class="form-label" for="mill-oil-kg">Κιλά Λαδιού *</label>
-                            <input type="number" id="mill-oil-kg" class="form-control" required min="0">
+                            <input type="number" id="mill-oil-kg" class="form-control" autocomplete="off" required min="0">
                             <small class="form-text text-muted">Λίτρα = Κιλά × 1.1</small>
                         </div>
                         <div class="form-group">
                             <label class="form-label" for="mill-expenses">Κόστος (€) *</label>
-                            <input type="number" id="mill-expenses" class="form-control" required min="0" step="0.01">
+                            <input type="number" id="mill-expenses" class="form-control" autocomplete="off" required min="0" step="0.01">
                         </div>
                         <div class="form-group">
                             <label class="form-label" for="mill-notes">Σημειώσεις</label>
-                            <textarea id="mill-notes" class="form-control" rows="3"></textarea>
+                            <textarea id="mill-notes" class="form-control" rows="3" autocomplete="off"></textarea>
                         </div>
                     </form>
                 </div>

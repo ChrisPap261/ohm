@@ -41,19 +41,19 @@ function loadSeasons() {
                     <button class="modal-close" onclick="closeSeasonModal()">&times;</button>
                 </div>
                 <div class="modal-body">
-                    <form id="season-form">
+                    <form id="season-form" autocomplete="off">
                         <input type="hidden" id="season-id">
                         <div class="form-group">
                             <label class="form-label" for="season-name">Όνομα *</label>
-                            <input type="text" id="season-name" class="form-control" required placeholder="π.χ. 2025-26">
+                            <input type="text" id="season-name" class="form-control" autocomplete="off" required placeholder="π.χ. 2025-26">
                         </div>
                         <div class="form-group">
                             <label class="form-label" for="season-start">Ημερομηνία Έναρξης *</label>
-                            <input type="date" id="season-start" class="form-control" required>
+                            <input type="date" id="season-start" class="form-control" autocomplete="off" required>
                         </div>
                         <div class="form-group">
                             <label class="form-label" for="season-end">Ημερομηνία Λήξης *</label>
-                            <input type="date" id="season-end" class="form-control" required>
+                            <input type="date" id="season-end" class="form-control" autocomplete="off" required>
                         </div>
                         <div class="form-group">
                             <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">

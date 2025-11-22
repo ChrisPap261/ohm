@@ -25,7 +25,7 @@ function loadDashboard() {
                 <h1 class="page-title">Επισκόπηση</h1>
                 <p class="page-description" id="dashboard-season-name">Στατιστικά για την περίοδο ${activeSeason.name}</p>
             </div>
-            <select id="dashboard-season-select" class="form-control" style="width: auto; min-width: 200px;">
+            <select id="dashboard-season-select" class="form-control" autocomplete="off" style="width: auto; min-width: 200px;">
                 <!-- Seasons will be loaded here -->
             </select>
         </div>

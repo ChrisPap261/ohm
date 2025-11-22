@@ -42,11 +42,11 @@ function loadTransactions() {
                     <button class="modal-close" onclick="closeTransactionModal()">&times;</button>
                 </div>
                 <div class="modal-body">
-                    <form id="transaction-form">
+                    <form id="transaction-form" autocomplete="off">
                         <input type="hidden" id="transaction-id">
                         <div class="form-group">
                             <label class="form-label" for="transaction-type">Τύπος *</label>
-                            <select id="transaction-type" class="form-select" required>
+                            <select id="transaction-type" class="form-select" autocomplete="off" required>
                                 <option value="">Επιλέξτε τύπο</option>
                                 <option value="income">Έσοδο</option>
                                 <option value="expense">Έξοδο</option>
@@ -55,19 +55,19 @@ function loadTransactions() {
                         </div>
                         <div class="form-group">
                             <label class="form-label" for="transaction-date">Ημερομηνία *</label>
-                            <input type="date" id="transaction-date" class="form-control" required>
+                            <input type="date" id="transaction-date" class="form-control" autocomplete="off" required>
                         </div>
                         <div class="form-group">
                             <label class="form-label" for="transaction-description">Περιγραφή *</label>
-                            <input type="text" id="transaction-description" class="form-control" required>
+                            <input type="text" id="transaction-description" class="form-control" autocomplete="off" required>
                         </div>
                         <div class="form-group">
                             <label class="form-label" for="transaction-amount">Ποσό (€) *</label>
-                            <input type="number" id="transaction-amount" class="form-control" required min="0" step="0.01">
+                            <input type="number" id="transaction-amount" class="form-control" autocomplete="off" required min="0" step="0.01">
                         </div>
                         <div class="form-group">
                             <label class="form-label" for="transaction-notes">Σημειώσεις</label>
-                            <textarea id="transaction-notes" class="form-control" rows="3"></textarea>
+                            <textarea id="transaction-notes" class="form-control" rows="3" autocomplete="off"></textarea>
                         </div>
                     </form>
                 </div>

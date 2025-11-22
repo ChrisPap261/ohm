@@ -55,7 +55,7 @@ $user = $auth->getCurrentUser();
                 <li class="sidebar-menu-item">
                     <a href="#" class="sidebar-menu-link" data-page="fields">
                         <span class="sidebar-menu-icon">🌾</span>
-                        <span>Χωράφια</span>
+                        <span>Αγροτεμάχια</span>
                     </a>
                 </li>
                 <li class="sidebar-menu-item">

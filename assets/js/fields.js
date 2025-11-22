@@ -5,11 +5,11 @@ function loadFields() {
         <div class="page-header">
             <div class="d-flex justify-content-between align-items-center">
                 <div>
-                    <h1 class="page-title">Χωράφια</h1>
-                    <p class="page-description">Διαχείριση χωραφιών</p>
+                    <h1 class="page-title">Αγροτεμάχια</h1>
+                    <p class="page-description">Διαχείριση αγροτεμαχίων</p>
                 </div>
                 <button class="btn btn-primary" onclick="showFieldModal()">
-                    ➕ Νέο Χωράφι
+                    ➕ Νέο Αγροτεμάχιο
                 </button>
             </div>
         </div>
@@ -37,7 +37,7 @@ function loadFields() {
         <div id="field-modal" class="modal">
             <div class="modal-dialog">
                 <div class="modal-header">
-                    <h3 class="modal-title" id="field-modal-title">Νέο Χωράφι</h3>
+                    <h3 class="modal-title" id="field-modal-title">Νέο Αγροτεμάχιο</h3>
                     <button class="modal-close" onclick="closeFieldModal()">&times;</button>
                 </div>
                 <div class="modal-body">
@@ -111,7 +111,7 @@ function displayFields(fields) {
 
 function displayFieldsTable(fields) {
     if (fields.length === 0) {
-        $('#fields-table tbody').html('<tr><td colspan="5" class="text-center">Δεν υπάρχουν χωράφια</td></tr>');
+        $('#fields-table tbody').html('<tr><td colspan="5" class="text-center">Δεν υπάρχουν αγροτεμάχια</td></tr>');
         return;
     }
     
@@ -137,14 +137,14 @@ function displayFieldsTable(fields) {
 
 function showFieldModal(field = null) {
     if (field) {
-        $('#field-modal-title').text('Επεξεργασία Χωραφιού');
+        $('#field-modal-title').text('Επεξεργασία Αγροτεμαχίου');
         $('#field-id').val(field.id);
         $('#field-name').val(field.name);
         $('#field-location').val(field.location || '');
         $('#field-area').val(field.area || '');
         $('#field-tree-count').val(field.tree_count || '');
     } else{
-        $('#field-modal-title').text('Νέο Χωράφι');
+        $('#field-modal-title').text('Νέο Αγροτεμάχιο');
         $('#field-form')[0].reset();
         $('#field-id').val('');
     }
@@ -182,7 +182,7 @@ function saveField() {
         data: JSON.stringify(data),
         success: function(response) {
             if (response.success) {
-                showAlert('Το χωράφι αποθηκεύτηκε επιτυχώς', 'success');
+                showAlert('Το αγροτεμάχιο αποθηκεύτηκε επιτυχώς', 'success');
                 closeFieldModal();
                 loadFieldsData();
             } else {
@@ -193,7 +193,7 @@ function saveField() {
 }
 
 function deleteField(id) {
-    if (!confirm('Είστε σίγουροι ότι θέλετε να διαγράψετε αυτό το χωράφι;')) {
+    if (!confirm('Είστε σίγουροι ότι θέλετε να διαγράψετε αυτό το αγροτεμάχιο;')) {
         return;
     }
     
@@ -202,7 +202,7 @@ function deleteField(id) {
         method: 'POST',
         success: function(response) {
             if (response.success) {
-                showAlert('Το χωράφι διαγράφηκε επιτυχώς', 'success');
+                showAlert('Το αγροτεμάχιο διαγράφηκε επιτυχώς', 'success');
                 loadFieldsData();
             } else {
                 showAlert(response.error || 'Σφάλμα διαγραφής', 'danger');

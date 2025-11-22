@@ -22,7 +22,7 @@ function loadHarvests() {
                     <thead>
                         <tr>
                             <th>Ημερομηνία</th>
-                            <th>Χωράφι</th>
+                            <th>Αγροτεμάχιο</th>
                             <th>Τελάρα</th>
                             <th>Κιλά Ελιών</th>
                             <th>Σημειώσεις</th>
@@ -47,9 +47,9 @@ function loadHarvests() {
                     <form id="harvest-form">
                         <input type="hidden" id="harvest-id">
                         <div class="form-group">
-                            <label class="form-label" for="harvest-field">Χωράφι *</label>
+                            <label class="form-label" for="harvest-field">Αγροτεμάχιο *</label>
                             <select id="harvest-field" class="form-select" required>
-                                <option value="">Επιλέξτε χωράφι</option>
+                                <option value="">Επιλέξτε αγροτεμάχιο</option>
                             </select>
                         </div>
                         <div class="form-group">
@@ -128,7 +128,7 @@ function displayHarvests(harvests) {
     const mobileConfig = {
         getHeader: (h) => formatDate(h.harvest_date),
         fields: [
-            { label: 'Χωράφι', getValue: (h) => h.field_name },
+            { label: 'Αγροτεμάχιο', getValue: (h) => h.field_name },
             { label: 'Τελάρα', getValue: (h) => h.crates },
             { label: 'Κιλά Ελιών', getValue: (h) => h.olives_kg + 'kg' },
             { label: 'Σημειώσεις', getValue: (h) => h.notes || '-' }

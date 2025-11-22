@@ -37,7 +37,7 @@ function loadDashboard() {
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
             <div class="card">
                 <div class="card-header">
-                    <h3 class="card-title">Απόδοση ανά Χωράφι</h3>
+                    <h3 class="card-title">Απόδοση ανά Αγροτεμάχιο</h3>
                     <p class="card-description">Συνολική παραγωγή σε kg ελιών</p>
                 </div>
                 <div class="chart-container" style="position: relative; height: 300px; width: 100%;">

@@ -28,6 +28,17 @@ $(document).ready(function() {
         $('.sidebar').removeClass('show');
     });
     
+    // Logo click - navigate to dashboard
+    $('.sidebar-logo, .mobile-navbar-logo').on('click', function(e) {
+        e.preventDefault();
+        navigateTo('dashboard');
+        // Close mobile menu after navigation
+        $('.sidebar').removeClass('show');
+    });
+    
+    // Make logos clickable (cursor pointer)
+    $('.sidebar-logo, .mobile-navbar-logo').css('cursor', 'pointer');
+    
     // Logout
     $('#logout-btn').on('click', function() {
         $.ajax({

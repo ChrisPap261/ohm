@@ -79,12 +79,37 @@ switch ($action) {
         $stmt->execute([$userId, $userId, $seasonId]);
         $prevInventory = $stmt->fetch();
         
-        // Calculate remaining oil (in kg)
+        // Calculate remaining oil for the selected season (in kg)
         $totalProduced = (int)($millStats['total_oil_kg'] ?? 0);
         $totalSoldLiters = (int)($oilSalesStats['total_oil_sold'] ?? 0);
         $totalSoldKg = round($totalSoldLiters / 1.1); // Convert liters to kg
         $previousInv = (int)($prevInventory['previous_inventory'] ?? 0);
         $remainingOil = $totalProduced - $totalSoldKg + $previousInv;
+
+        // Calculate overall remaining oil across all seasons
+        $stmt = $db->prepare("SELECT COALESCE(SUM(oil_kg), 0) as total_oil_kg
+            FROM mill_processing
+            WHERE user_id = ?");
+        $stmt->execute([$userId]);
+        $allMillStats = $stmt->fetch();
+
+        $stmt = $db->prepare("SELECT COALESCE(SUM(oil_liters), 0) as total_oil_sold
+            FROM oil_sales
+            WHERE user_id = ?");
+        $stmt->execute([$userId]);
+        $allOilSalesStats = $stmt->fetch();
+
+        $stmt = $db->prepare("SELECT COALESCE(SUM(oil_kg), 0) as total_inventory
+            FROM oil_inventory
+            WHERE user_id = ?");
+        $stmt->execute([$userId]);
+        $allInventoryStats = $stmt->fetch();
+
+        $allProduced = (int)($allMillStats['total_oil_kg'] ?? 0);
+        $allSoldLiters = (int)($allOilSalesStats['total_oil_sold'] ?? 0);
+        $allSoldKg = round($allSoldLiters / 1.1);
+        $allInventory = (int)($allInventoryStats['total_inventory'] ?? 0);
+        $overallRemainingOil = $allProduced - $allSoldKg + $allInventory;
         
         echo json_encode([
             'success' => true,
@@ -107,7 +132,8 @@ switch ($action) {
                     'totalSold' => $totalSoldLiters, // in liters
                     'totalRevenue' => (int)($oilSalesStats['total_oil_revenue'] ?? 0),
                     'remaining' => $remainingOil, // in kg
-                    'previousInventory' => $previousInv
+                    'previousInventory' => $previousInv,
+                    'remainingAllSeasons' => $overallRemainingOil
                 ]
             ]
         ]);

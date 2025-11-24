@@ -88,6 +88,9 @@ function loadDashboardStats() {
 }
 
 function displayStats(data) {
+    const totalRemainingAllSeasons = data.oil.remainingAllSeasons ?? data.oil.remaining;
+    const totalRemainingAllSeasonsLiters = (totalRemainingAllSeasons * 1.1).toFixed(0);
+    const currentSeasonRemaining = data.oil.remaining;
     const stats = `
         <div class="stat-card">
             <div class="stat-header">
@@ -121,8 +124,8 @@ function displayStats(data) {
                 <span class="stat-label" style="color: #ffffff;">Συν. Υπ. Λαδιού</span>
                 <span class="stat-icon">📦</span>
             </div>
-            <div class="stat-value" style="color: #ffffff;">${data.oil.remaining}kg (${(data.oil.remaining * 1.1).toFixed(0)}L)</div>
-            <div class="stat-subtitle" style="color: #ffffff;">Προηγ.: ${data.oil.previousInventory} κγ.</div>
+            <div class="stat-value" style="color: #ffffff;">${totalRemainingAllSeasons}kg (${totalRemainingAllSeasonsLiters}L)</div>
+            <div class="stat-subtitle" style="color: #ffffff;">Τρέχουσα περίοδος: ${currentSeasonRemaining}kg</div>
         </div>
         
 

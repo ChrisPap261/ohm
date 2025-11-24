@@ -193,6 +193,39 @@ body {
     font-size: 0.875rem;
 }
 
+.analytics-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #2e3a17;
+    margin-bottom: 0.35rem;
+}
+
+.analytics-description {
+    font-size: 1rem;
+    color: #7c8761;
+}
+
+.analytics-card {
+    border-radius: 18px;
+    border-color: rgba(110, 138, 64, 0.25);
+}
+
+.analytics-card-header {
+    margin-bottom: 0.75rem;
+}
+
+.analytics-card-title {
+    font-size: 1.35rem;
+    font-weight: 600;
+    color: #374218;
+    margin-bottom: 0.15rem;
+}
+
+.analytics-card-subtitle {
+    font-size: 0.95rem;
+    color: #8c966f;
+}
+
 /* Cards */
 .card {
     background: var(--surface);

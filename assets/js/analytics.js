@@ -4,15 +4,15 @@ function loadAnalytics() {
     const content = `
         <div class="page-header">
             <div>
-                <h1>Analytics</h1>
-                <p class="page-description">Συγκριτικά στατιστικά απόδοσης για όλες τις περιόδους.</p>
+                <h1 class="analytics-title">Analytics</h1>
+                <p class="analytics-description">Συγκριτικά στατιστικά απόδοσης για όλες τις περιόδους.</p>
             </div>
         </div>
-        <div class="card">
-            <div class="card-header">
+        <div class="card analytics-card">
+            <div class="card-header analytics-card-header">
                 <div>
-                    <h2>Απόδοση λαδιού ανά περίοδο</h2>
-                    <p class="text-muted">Μέσο ποσοστό κιλών λαδιού ανά κιλό ελιάς (σύνολο ανά περίοδο).</p>
+                    <h2 class="analytics-card-title">Απόδοση λαδιού ανά περίοδο</h2>
+                    <p class="analytics-card-subtitle">Μέσο ποσοστό κιλών λαδιού ανά κιλό ελιάς (σύνολο ανά περίοδο).</p>
                 </div>
             </div>
             <div class="card-content">
@@ -90,8 +90,7 @@ function renderYieldChart(rows) {
                 data: values,
                 yieldRatios: ratios,
                 backgroundColor: 'rgba(138, 170, 82, 0.65)',
-                borderColor: '#6a843f',
-                borderWidth: 2,
+                borderWidth: 0,
                 borderRadius: 10,
                 hoverBackgroundColor: 'rgba(138, 170, 82, 0.85)'
             }]

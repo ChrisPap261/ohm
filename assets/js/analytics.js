@@ -70,6 +70,7 @@ function renderYieldChart(rows) {
 
     const labels = filteredRows.map(row => row.seasonName || `Περίοδος ${row.seasonId}`);
     const values = filteredRows.map(row => row.yieldPercent);
+    const ratios = filteredRows.map(row => formatYieldRatio(row.totalOlivesKg, row.totalOilKg));
 
     wrapper.show();
     emptyState.hide();
@@ -87,10 +88,12 @@ function renderYieldChart(rows) {
             datasets: [{
                 label: 'Απόδοση (%)',
                 data: values,
-                backgroundColor: 'rgba(72, 149, 239, 0.3)',
-                borderColor: 'rgba(72, 149, 239, 1)',
+                yieldRatios: ratios,
+                backgroundColor: 'rgba(138, 170, 82, 0.65)',
+                borderColor: '#6a843f',
                 borderWidth: 2,
-                borderRadius: 6
+                borderRadius: 10,
+                hoverBackgroundColor: 'rgba(138, 170, 82, 0.85)'
             }]
         },
         options: {
@@ -99,7 +102,11 @@ function renderYieldChart(rows) {
             scales: {
                 y: {
                     beginAtZero: true,
+                    grid: {
+                        color: 'rgba(106, 132, 63, 0.15)'
+                    },
                     ticks: {
+                        color: '#6b6b6b',
                         callback: function(value) {
                             return value + '%';
                         }
@@ -107,17 +114,23 @@ function renderYieldChart(rows) {
                     title: {
                         display: true,
                         text: 'Ποσοστό απόδοσης',
-                        color: '#6c757d',
+                        color: '#5a5a5a',
                         font: {
                             size: 12
                         }
                     }
                 },
                 x: {
+                    grid: {
+                        display: false
+                    },
+                    ticks: {
+                        color: '#6b6b6b'
+                    },
                     title: {
                         display: true,
                         text: 'Περίοδοι',
-                        color: '#6c757d',
+                        color: '#5a5a5a',
                         font: {
                             size: 12
                         }
@@ -126,24 +139,39 @@ function renderYieldChart(rows) {
             },
             plugins: {
                 legend: {
-                    display: true
+                    display: false
                 },
                 tooltip: {
                     callbacks: {
                         label: function(context) {
-                            return `${context.formattedValue}% μέσος όρος`;
+                            const ratio = context.dataset.yieldRatios?.[context.dataIndex] || '';
+                            return `${context.formattedValue}% μέσος όρος (${ratio})`;
                         }
                     }
                 },
                 datalabels: {
                     anchor: 'end',
-                    align: 'start',
-                    formatter: function(value) {
-                        return value ? `${value}%` : '';
+                    align: 'end',
+                    color: '#4b4b4b',
+                    font: {
+                        weight: '600'
+                    },
+                    offset: -6,
+                    formatter: function(value, context) {
+                        const ratio = context.dataset.yieldRatios?.[context.dataIndex];
+                        return value ? `${value}%\n${ratio || ''}` : '';
                     }
                 }
             }
         }
     });
+}
+
+function formatYieldRatio(olivesKg, oilKg) {
+    if (!oilKg) {
+        return '—';
+    }
+    const ratio = olivesKg / oilKg;
+    return `${ratio.toFixed(1)}:1`;
 }
 

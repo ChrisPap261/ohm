@@ -92,7 +92,12 @@ function displaySeasons(seasons) {
         fields: [
             { label: 'Ημ/νία Έναρξης', getValue: (s) => formatDate(s.start_date) },
             { label: 'Ημ/νία Λήξης', getValue: (s) => formatDate(s.end_date) },
-            { label: 'Κατάσταση', getValue: (s) => s.is_active ? '✓ Ενεργή' : 'Ανενεργή' }
+            { 
+                label: 'Κατάσταση', 
+                getValue: (s) => s.is_active 
+                    ? '<span style="color: var(--success); font-weight: 600;">✓ Ενεργή</span>' 
+                    : `<button class="btn btn-primary btn-sm" onclick="activateSeason(${s.id})">Ενεργοποίηση</button>` 
+            }
         ],
         actions: [
             {
@@ -104,6 +109,12 @@ function displaySeasons(seasons) {
                 label: '🗑️ Διαγραφή',
                 className: 'btn-secondary btn-sm',
                 getOnClick: (s) => `deleteSeason(${s.id})`
+            },
+            {
+                label: '⚡ Ενεργοποίηση',
+                className: 'btn-primary btn-sm',
+                getOnClick: (s) => s.is_active ? '' : `activateSeason(${s.id})`,
+                isHidden: (s) => s.is_active
             }
         ]
     };
@@ -124,8 +135,8 @@ function displaySeasonsTable(seasons) {
             <td>${formatDate(season.end_date)}</td>
             <td>
                 ${season.is_active ? 
-                    '<span style="color: var(--success); font-weight: 600;">✓ Ενεργή</span>' : 
-                    '<span style="color: var(--text-muted);">Ανενεργή</span>'
+                    '<button class="btn btn-success btn-sm" disabled>✓ Ενεργή</button>' : 
+                    `<button class="btn btn-primary btn-sm" onclick="activateSeason(${season.id})">Ενεργοποίηση</button>`
                 }
             </td>
             <td>
@@ -215,6 +226,24 @@ function deleteSeason(id) {
                 loadActiveSeason(); // Reload active season
             } else {
                 showAlert(response.error || 'Σφάλμα διαγραφής', 'danger');
+            }
+        }
+    });
+}
+
+function activateSeason(id) {
+    $.ajax({
+        url: 'api/seasons.php?action=activate',
+        method: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify({ id }),
+        success: function(response) {
+            if (response.success) {
+                showAlert('Η περίοδος ενεργοποιήθηκε επιτυχώς', 'success');
+                loadSeasonsData();
+                loadActiveSeason();
+            } else {
+                showAlert(response.error || 'Σφάλμα ενεργοποίησης', 'danger');
             }
         }
     });

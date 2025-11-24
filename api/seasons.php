@@ -75,6 +75,38 @@ switch ($action) {
         }
         break;
         
+    case 'activate':
+        $data = json_decode(file_get_contents('php://input'), true);
+        $id = $data['id'] ?? 0;
+        
+        if (!$id) {
+            echo json_encode(['success' => false, 'error' => 'Missing season id']);
+            break;
+        }
+        
+        try {
+            $db->beginTransaction();
+            
+            $stmt = $db->prepare("UPDATE seasons SET is_active = 0 WHERE user_id = ?");
+            $stmt->execute([$userId]);
+            
+            $stmt = $db->prepare("UPDATE seasons SET is_active = 1 WHERE id = ? AND user_id = ?");
+            $stmt->execute([$id, $userId]);
+            
+            if ($stmt->rowCount() === 0) {
+                $db->rollBack();
+                echo json_encode(['success' => false, 'error' => 'Δεν βρέθηκε η περίοδος']);
+                break;
+            }
+            
+            $db->commit();
+            echo json_encode(['success' => true]);
+        } catch (Exception $e) {
+            $db->rollBack();
+            echo json_encode(['success' => false, 'error' => 'Αποτυχία ενεργοποίησης περιόδου']);
+        }
+        break;
+        
     default:
         echo json_encode(['success' => false, 'error' => 'Invalid action']);
 }

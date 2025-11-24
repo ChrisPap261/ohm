@@ -18,9 +18,16 @@ function renderMobileCards(data, config) {
             </div>
         `).join('');
         
-        const actions = config.actions ? `
+        const visibleActions = config.actions ? config.actions.filter(action => {
+            if (typeof action.isHidden === 'function') {
+                return !action.isHidden(item);
+            }
+            return !action.isHidden;
+        }) : [];
+        
+        const actions = visibleActions.length ? `
             <div class="mobile-card-actions">
-                ${config.actions.map(action => `
+                ${visibleActions.map(action => `
                     <button class="btn ${action.className}" onclick="${action.getOnClick(item)}">
                         ${action.label}
                     </button>

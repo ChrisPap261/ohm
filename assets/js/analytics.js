@@ -116,17 +116,22 @@ function renderYieldChart(rows) {
     }
 
     yieldBySeasonChart = new Chart(ctx, {
-        type: 'bar',
+        type: 'line',
         data: {
             labels,
             datasets: [{
                 label: 'Απόδοση (%)',
                 data: values,
                 yieldRatios: ratios,
-                backgroundColor: 'rgba(138, 170, 82, 0.65)',
-                borderWidth: 0,
-                borderRadius: 10,
-                hoverBackgroundColor: 'rgba(138, 170, 82, 0.85)'
+                borderColor: '#5f7631',
+                backgroundColor: 'rgba(139, 169, 82, 0.2)',
+                tension: 0.35,
+                fill: true,
+                pointBackgroundColor: '#ffffff',
+                pointBorderColor: '#5f7631',
+                pointBorderWidth: 2,
+                pointRadius: 5,
+                pointHoverRadius: 6
             }]
         },
         options: {
@@ -183,13 +188,12 @@ function renderYieldChart(rows) {
                     }
                 },
                 datalabels: {
+                    align: 'top',
                     anchor: 'end',
-                    align: 'end',
                     color: '#4b4b4b',
                     font: {
                         weight: '600'
                     },
-                    offset: -6,
                     formatter: function(value, context) {
                         const ratio = context.dataset.yieldRatios?.[context.dataIndex];
                         return value ? `${value}%\n${ratio || ''}` : '';

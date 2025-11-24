@@ -125,7 +125,7 @@ function displayMill(records) {
             },
             {
                 label: '🗑️ Διαγραφή',
-                className: 'btn-danger btn-sm',
+                className: 'btn-secondary btn-sm',
                 getOnClick: (r) => `deleteMill(${r.id})`
             }
         ]
@@ -156,7 +156,7 @@ function displayMillTable(records) {
                     <button class="btn btn-secondary btn-sm" onclick='editMill(${JSON.stringify(record)})'>
                         ✏️
                     </button>
-                    <button class="btn btn-danger btn-sm" onclick="deleteMill(${record.id})">
+                    <button class="btn btn-secondary btn-sm" onclick="deleteMill(${record.id})">
                         🗑️
                     </button>
                 </td>

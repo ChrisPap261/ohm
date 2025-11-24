@@ -195,7 +195,7 @@ function displayOilSales(sales) {
             },
             {
                 label: '🗑️ Διαγραφή',
-                className: 'btn-danger btn-sm',
+                className: 'btn-secondary btn-sm',
                 getOnClick: (s) => `deleteOilSale(${s.id})`
             }
         ]
@@ -271,7 +271,7 @@ function displayOilSalesTable(sales) {
                 <button class="btn btn-secondary btn-sm" onclick='editOilSale(${JSON.stringify(sale)})'>
                     ✏️
                 </button>
-                <button class="btn btn-danger btn-sm" onclick="deleteOilSale(${sale.id})">
+                <button class="btn btn-secondary btn-sm" onclick="deleteOilSale(${sale.id})">
                     🗑️
                 </button>
             </td>

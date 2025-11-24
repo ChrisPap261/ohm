@@ -129,7 +129,7 @@ function displayTransactions(transactions) {
             },
             {
                 label: '🗑️ Διαγραφή',
-                className: 'btn-danger btn-sm',
+                className: 'btn-secondary btn-sm',
                 getOnClick: (t) => `deleteTransaction(${t.id})`
             }
         ]
@@ -167,7 +167,7 @@ function displayTransactionsTable(transactions) {
                 <button class="btn btn-secondary btn-sm" onclick='editTransaction(${JSON.stringify(transaction)})'>
                     ✏️
                 </button>
-                <button class="btn btn-danger btn-sm" onclick="deleteTransaction(${transaction.id})">
+                <button class="btn btn-secondary btn-sm" onclick="deleteTransaction(${transaction.id})">
                     🗑️
                 </button>
             </td>

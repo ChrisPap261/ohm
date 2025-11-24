@@ -102,7 +102,7 @@ function displaySeasons(seasons) {
             },
             {
                 label: '🗑️ Διαγραφή',
-                className: 'btn-danger btn-sm',
+                className: 'btn-secondary btn-sm',
                 getOnClick: (s) => `deleteSeason(${s.id})`
             }
         ]
@@ -132,7 +132,7 @@ function displaySeasonsTable(seasons) {
                 <button class="btn btn-secondary btn-sm" onclick='editSeason(${JSON.stringify(season)})'>
                     ✏️ Επεξεργασία
                 </button>
-                <button class="btn btn-danger btn-sm" onclick="deleteSeason(${season.id})">
+                <button class="btn btn-secondary btn-sm" onclick="deleteSeason(${season.id})">
                     🗑️ Διαγραφή
                 </button>
             </td>

@@ -100,7 +100,7 @@ function displayFields(fields) {
             },
             {
                 label: '🗑️ Διαγραφή',
-                className: 'btn-danger btn-sm',
+                className: 'btn-secondary btn-sm',
                 getOnClick: (f) => `deleteField(${f.id})`
             }
         ]
@@ -125,7 +125,7 @@ function displayFieldsTable(fields) {
                 <button class="btn btn-secondary btn-sm" onclick='editField(${JSON.stringify(field)})'>
                     ✏️ Επεξεργασία
                 </button>
-                <button class="btn btn-danger btn-sm" onclick="deleteField(${field.id})">
+                <button class="btn btn-secondary btn-sm" onclick="deleteField(${field.id})">
                     🗑️ Διαγραφή
                 </button>
             </td>

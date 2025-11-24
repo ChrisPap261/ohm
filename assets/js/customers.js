@@ -96,7 +96,7 @@ function displayCustomers(customers) {
             },
             {
                 label: '🗑️ Διαγραφή',
-                className: 'btn-danger btn-sm',
+                className: 'btn-secondary btn-sm',
                 getOnClick: (c) => `deleteCustomer(${c.id})`
             }
         ]
@@ -122,7 +122,7 @@ function displayCustomersTable(customers) {
                 <button class="btn btn-secondary btn-sm" onclick='editCustomer(${JSON.stringify(customer)})'>
                     ✏️
                 </button>
-                <button class="btn btn-danger btn-sm" onclick="deleteCustomer(${customer.id})">
+                <button class="btn btn-secondary btn-sm" onclick="deleteCustomer(${customer.id})">
                     🗑️
                 </button>
             </td>

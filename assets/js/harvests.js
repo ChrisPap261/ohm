@@ -141,7 +141,7 @@ function displayHarvests(harvests) {
             },
             {
                 label: '🗑️ Διαγραφή',
-                className: 'btn-danger btn-sm',
+                className: 'btn-secondary btn-sm',
                 getOnClick: (h) => `deleteHarvest(${h.id})`
             }
         ]
@@ -167,7 +167,7 @@ function displayHarvestsTable(harvests) {
                 <button class="btn btn-secondary btn-sm" onclick='editHarvest(${JSON.stringify(harvest)})'>
                     ✏️
                 </button>
-                <button class="btn btn-danger btn-sm" onclick="deleteHarvest(${harvest.id})">
+                <button class="btn btn-secondary btn-sm" onclick="deleteHarvest(${harvest.id})">
                     🗑️
                 </button>
             </td>

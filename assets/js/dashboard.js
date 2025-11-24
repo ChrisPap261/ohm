@@ -71,6 +71,7 @@ function loadDashboardStats() {
         success: function(response) {
             if (response.success) {
                 displayStats(response.data);
+                displayTransactionsChart(response.data.transactions);
             }
         }
     });
@@ -180,18 +181,6 @@ function displayHarvestsChart(data) {
                 x: {
                     beginAtZero: true
                 }
-            }
-        }
-    });
-    
-    // Load transaction stats for pie chart
-    const seasonId = getSeasonId();
-    $.ajax({
-        url: `api/stats.php?action=dashboard&season_id=${seasonId}`,
-        method: 'GET',
-        success: function(response) {
-            if (response.success) {
-                displayTransactionsChart(response.data.transactions);
             }
         }
     });

@@ -694,6 +694,15 @@ body {
         overflow-x: hidden;
     }
     
+    /* Remove card styling when it contains table-responsive */
+    .card:has(.table-responsive) {
+        padding: 0;
+        border: none;
+        background: transparent;
+        margin-bottom: 0;
+        border-radius: 0;
+    }
+    
     /* Hide tables on mobile */
     .table-responsive .table {
         display: none;

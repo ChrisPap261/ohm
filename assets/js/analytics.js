@@ -137,6 +137,16 @@ function renderYieldChart(rows) {
         options: {
             responsive: true,
             maintainAspectRatio: false,
+            animation: {
+                duration: 0
+            },
+            transitions: {
+                active: {
+                    animation: {
+                        duration: 0
+                    }
+                }
+            },
             scales: {
                 y: {
                     beginAtZero: true,
@@ -326,6 +336,16 @@ function renderFieldYieldChart(selectedField) {
         options: {
             responsive: true,
             maintainAspectRatio: false,
+            animation: {
+                duration: 0
+            },
+            transitions: {
+                active: {
+                    animation: {
+                        duration: 0
+                    }
+                }
+            },
             plugins: {
                 legend: {
                     display: true,

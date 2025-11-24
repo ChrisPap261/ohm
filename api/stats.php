@@ -53,7 +53,8 @@ switch ($action) {
         
         // Oil sales stats (in liters) - revenue to be included in total income
         $stmt = $db->prepare("SELECT 
-            SUM(oil_liters) as total_oil_sold,
+            SUM(CASE WHEN price_per_liter > 0 OR total_amount > 0 THEN oil_liters ELSE 0 END) as total_oil_sold_paid,
+            SUM(CASE WHEN price_per_liter = 0 AND total_amount = 0 THEN oil_liters ELSE 0 END) as total_oil_given_free,
             SUM(total_amount) as total_oil_revenue
             FROM oil_sales 
             WHERE user_id = ? AND season_id = ?");
@@ -81,10 +82,12 @@ switch ($action) {
         
         // Calculate remaining oil for the selected season (in kg)
         $totalProduced = (int)($millStats['total_oil_kg'] ?? 0);
-        $totalSoldLiters = (int)($oilSalesStats['total_oil_sold'] ?? 0);
-        $totalSoldKg = round($totalSoldLiters / 1.1); // Convert liters to kg
+        $totalSoldLiters = (int)($oilSalesStats['total_oil_sold_paid'] ?? 0);
+        $totalGivenFreeLiters = (int)($oilSalesStats['total_oil_given_free'] ?? 0);
+        $totalSoldKg = (int)round($totalSoldLiters / 1.1); // Convert liters to kg
+        $totalGivenFreeKg = (int)round($totalGivenFreeLiters / 1.1);
         $previousInv = (int)($prevInventory['previous_inventory'] ?? 0);
-        $remainingOil = $totalProduced - $totalSoldKg + $previousInv;
+        $remainingOil = $totalProduced - $totalSoldKg - $totalGivenFreeKg + $previousInv;
 
         // Calculate overall remaining oil across all seasons
         $stmt = $db->prepare("SELECT COALESCE(SUM(oil_kg), 0) as total_oil_kg
@@ -93,16 +96,20 @@ switch ($action) {
         $stmt->execute([$userId]);
         $allMillStats = $stmt->fetch();
 
-        $stmt = $db->prepare("SELECT COALESCE(SUM(oil_liters), 0) as total_oil_sold
+        $stmt = $db->prepare("SELECT 
+            COALESCE(SUM(CASE WHEN price_per_liter > 0 OR total_amount > 0 THEN oil_liters ELSE 0 END), 0) as total_oil_sold_paid,
+            COALESCE(SUM(CASE WHEN price_per_liter = 0 AND total_amount = 0 THEN oil_liters ELSE 0 END), 0) as total_oil_given_free
             FROM oil_sales
             WHERE user_id = ?");
         $stmt->execute([$userId]);
         $allOilSalesStats = $stmt->fetch();
 
         $allProduced = (int)($allMillStats['total_oil_kg'] ?? 0);
-        $allSoldLiters = (int)($allOilSalesStats['total_oil_sold'] ?? 0);
+        $allSoldLiters = (int)($allOilSalesStats['total_oil_sold_paid'] ?? 0);
+        $allGivenFreeLiters = (int)($allOilSalesStats['total_oil_given_free'] ?? 0);
         $allSoldKg = (int)round($allSoldLiters / 1.1);
-        $overallRemainingOil = max($allProduced - $allSoldKg, 0);
+        $allGivenFreeKg = (int)round($allGivenFreeLiters / 1.1);
+        $overallRemainingOil = max($allProduced - $allSoldKg - $allGivenFreeKg, 0);
         
         echo json_encode([
             'success' => true,
@@ -123,6 +130,7 @@ switch ($action) {
                 'oil' => [
                     'totalProduced' => $totalProduced,
                     'totalSold' => $totalSoldLiters, // in liters
+                    'totalGivenFree' => $totalGivenFreeLiters, // in liters
                     'totalRevenue' => (int)($oilSalesStats['total_oil_revenue'] ?? 0),
                     'remaining' => $remainingOil, // in kg
                     'previousInventory' => $previousInv,

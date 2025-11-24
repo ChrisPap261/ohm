@@ -183,6 +183,66 @@ switch ($action) {
         
         echo json_encode(['success' => true, 'data' => $result]);
         break;
+
+    case 'field_crates_by_season':
+        $stmt = $db->prepare("
+            SELECT 
+                s.id as season_id,
+                s.name as season_name,
+                f.id as field_id,
+                f.name as field_name,
+                COALESCE(SUM(h.crates), 0) as total_crates
+            FROM seasons s
+            JOIN harvests h ON s.id = h.season_id AND h.user_id = ?
+            JOIN fields f ON h.field_id = f.id AND f.user_id = ?
+            WHERE s.user_id = ?
+            GROUP BY s.id, s.name, f.id, f.name
+            ORDER BY s.start_date ASC, f.name ASC
+        ");
+        $stmt->execute([$userId, $userId, $userId]);
+        $records = $stmt->fetchAll();
+
+        $fields = [];
+        $seasons = [];
+
+        foreach ($records as $row) {
+            $fieldId = (int)$row['field_id'];
+            $seasonId = (int)$row['season_id'];
+
+            if (!isset($fields[$fieldId])) {
+                $fields[$fieldId] = [
+                    'id' => $fieldId,
+                    'name' => $row['field_name']
+                ];
+            }
+
+            if (!isset($seasons[$seasonId])) {
+                $seasons[$seasonId] = [
+                    'id' => $seasonId,
+                    'name' => $row['season_name']
+                ];
+            }
+        }
+
+        $normalizedRecords = array_map(function($row) {
+            return [
+                'seasonId' => (int)$row['season_id'],
+                'seasonName' => $row['season_name'],
+                'fieldId' => (int)$row['field_id'],
+                'fieldName' => $row['field_name'],
+                'totalCrates' => (int)$row['total_crates']
+            ];
+        }, $records);
+
+        echo json_encode([
+            'success' => true,
+            'data' => [
+                'records' => $normalizedRecords,
+                'fields' => array_values($fields),
+                'seasons' => array_values($seasons)
+            ]
+        ]);
+        break;
         
     default:
         echo json_encode(['success' => false, 'error' => 'Invalid action']);

@@ -226,6 +226,44 @@ body {
     color: #8c966f;
 }
 
+.analytics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 1.5rem;
+}
+
+.analytics-card-header--with-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1.25rem;
+    flex-wrap: wrap;
+}
+
+.analytics-card-controls {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+}
+
+.analytics-card-controls label {
+    font-size: 0.8rem;
+    color: #7a8455;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.analytics-card-controls select {
+    padding: 0.4rem 0.8rem;
+    border-radius: 8px;
+    border: 1px solid rgba(110, 138, 64, 0.3);
+    background: #f8faf3;
+    color: #3a3d28;
+    font-weight: 500;
+    min-width: 180px;
+}
+
 /* Cards */
 .card {
     background: var(--surface);

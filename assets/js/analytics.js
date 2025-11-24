@@ -1,4 +1,10 @@
 let yieldBySeasonChart = null;
+let fieldYieldChart = null;
+let fieldYieldDataset = {
+    records: [],
+    fields: [],
+    seasons: []
+};
 
 function loadAnalytics() {
     const content = `
@@ -8,22 +14,49 @@ function loadAnalytics() {
                 <p class="analytics-description">Συγκριτικά στατιστικά απόδοσης για όλες τις περιόδους.</p>
             </div>
         </div>
-        <div class="card analytics-card">
-            <div class="card-header analytics-card-header">
-                <div>
-                    <h2 class="analytics-card-title">Απόδοση λαδιού ανά περίοδο</h2>
-                    <p class="analytics-card-subtitle">Μέσο ποσοστό κιλών λαδιού ανά κιλό ελιάς (σύνολο ανά περίοδο).</p>
+        <div class="analytics-grid">
+            <div class="card analytics-card">
+                <div class="card-header analytics-card-header">
+                    <div>
+                        <h2 class="analytics-card-title">Απόδοση λαδιού ανά περίοδο</h2>
+                        <p class="analytics-card-subtitle">Μέσο ποσοστό κιλών λαδιού ανά κιλό ελιάς (σύνολο ανά περίοδο).</p>
+                    </div>
+                </div>
+                <div class="card-content">
+                    <div id="yield-chart-loading" class="loading-state">
+                        Φόρτωση δεδομένων...
+                    </div>
+                    <div id="yield-chart-empty" class="empty-state" style="display:none;">
+                        Δεν βρέθηκαν δεδομένα από ελαιοτριβεία. Καταχωρίστε επεξεργασίες για να εμφανιστεί το γράφημα.
+                    </div>
+                    <div id="yield-chart-wrapper" style="height:320px; display:none;">
+                        <canvas id="yield-by-season-chart" aria-label="Διάγραμμα απόδοσης λαδιού"></canvas>
+                    </div>
                 </div>
             </div>
-            <div class="card-content">
-                <div id="yield-chart-loading" class="loading-state">
-                    Φόρτωση δεδομένων...
+            <div class="card analytics-card">
+                <div class="card-header analytics-card-header analytics-card-header--with-controls">
+                    <div>
+                        <h2 class="analytics-card-title">Απόδοση σε τελάρα ανά περίοδο</h2>
+                        <p class="analytics-card-subtitle">Σύνολο τελάρων ανά χρονιά, ανά αγροτεμάχιο ή συνολικά.</p>
+                    </div>
+                    <div class="analytics-card-controls">
+                        <label for="field-yield-filter">Αγροτεμάχιο</label>
+                        <select id="field-yield-filter">
+                            <option value="all">Όλα</option>
+                        </select>
+                    </div>
                 </div>
-                <div id="yield-chart-empty" class="empty-state" style="display:none;">
-                    Δεν βρέθηκαν δεδομένα από ελαιοτριβεία. Καταχωρίστε επεξεργασίες για να εμφανιστεί το γράφημα.
-                </div>
-                <div id="yield-chart-wrapper" style="height:320px; display:none;">
-                    <canvas id="yield-by-season-chart" aria-label="Διάγραμμα απόδοσης λαδιού"></canvas>
+                <div class="card-content">
+                    <div id="field-yield-chart-loading" class="loading-state">
+                        Φόρτωση δεδομένων...
+                    </div>
+                    <div id="field-yield-chart-empty" class="empty-state" style="display:none;">
+                        Δεν βρέθηκαν συγκομιδές για να εμφανιστούν δεδομένα.
+                    </div>
+                    <div id="field-yield-chart-wrapper" style="height:320px; display:none;">
+                        <canvas id="field-yield-chart" aria-label="Διάγραμμα τελάρων ανά περίοδο"></canvas>
+                    </div>
                 </div>
             </div>
         </div>
@@ -31,6 +64,7 @@ function loadAnalytics() {
 
     $('#page-content').html(content);
     fetchYieldBySeason();
+    fetchFieldYieldBySeason();
 }
 
 function fetchYieldBySeason() {
@@ -172,5 +206,158 @@ function formatYieldRatio(olivesKg, oilKg) {
     }
     const ratio = olivesKg / oilKg;
     return `${ratio.toFixed(1)}:1`;
+}
+
+function fetchFieldYieldBySeason() {
+    $.ajax({
+        url: 'api/stats.php?action=field_crates_by_season',
+        method: 'GET',
+        success: function(response) {
+            $('#field-yield-chart-loading').hide();
+
+            if (!response.success) {
+                showAlert(response.error || 'Αποτυχία φόρτωσης δεδομένων', 'danger');
+                $('#field-yield-chart-empty').show();
+                return;
+            }
+
+            fieldYieldDataset = response.data || { records: [], fields: [], seasons: [] };
+            populateFieldDropdown();
+            renderFieldYieldChart('all');
+        },
+        error: function() {
+            $('#field-yield-chart-loading').hide();
+            $('#field-yield-chart-empty').show();
+            showAlert('Αποτυχία φόρτωσης δεδομένων', 'danger');
+        }
+    });
+}
+
+function populateFieldDropdown() {
+    const select = $('#field-yield-filter');
+    select.empty();
+    select.append('<option value="all">Όλα</option>');
+
+    (fieldYieldDataset.fields || []).forEach(function(field) {
+        select.append(`<option value="${field.id}">${field.name}</option>`);
+    });
+
+    select.on('change', function() {
+        renderFieldYieldChart($(this).val());
+    });
+}
+
+function renderFieldYieldChart(selectedField) {
+    const emptyState = $('#field-yield-chart-empty');
+    const wrapper = $('#field-yield-chart-wrapper');
+    const { records = [], seasons = [] } = fieldYieldDataset;
+
+    if (!records.length || !seasons.length) {
+        emptyState.show();
+        wrapper.hide();
+        return;
+    }
+
+    const labels = seasons.map(season => season.name);
+    const values = seasons.map(season => {
+        const seasonId = season.id;
+        const seasonRecords = records.filter(record => record.seasonId === seasonId);
+
+        if (selectedField === 'all') {
+            return seasonRecords.reduce((sum, record) => sum + record.totalCrates, 0);
+        }
+
+        const matched = seasonRecords.find(record => String(record.fieldId) === String(selectedField));
+        return matched ? matched.totalCrates : 0;
+    });
+
+    const hasData = values.some(value => value > 0);
+
+    if (!hasData) {
+        emptyState.show();
+        wrapper.hide();
+        return;
+    }
+
+    wrapper.show();
+    emptyState.hide();
+
+    const ctx = document.getElementById('field-yield-chart').getContext('2d');
+
+    if (fieldYieldChart) {
+        fieldYieldChart.destroy();
+    }
+
+    const selectedFieldName = selectedField === 'all'
+        ? 'Όλα τα αγροτεμάχια'
+        : (fieldYieldDataset.fields.find(field => String(field.id) === String(selectedField))?.name || '');
+
+    fieldYieldChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels,
+            datasets: [{
+                label: selectedFieldName,
+                data: values,
+                borderColor: '#5f7631',
+                backgroundColor: 'rgba(139, 169, 82, 0.25)',
+                tension: 0.35,
+                fill: true,
+                pointBackgroundColor: '#ffffff',
+                pointBorderColor: '#5f7631',
+                pointBorderWidth: 2,
+                pointRadius: 5,
+                pointHoverRadius: 6
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: true,
+                    labels: {
+                        color: '#4b4b4b'
+                    }
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return `${context.formattedValue} τελάρα`;
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grid: {
+                        color: 'rgba(95, 118, 49, 0.15)'
+                    },
+                    ticks: {
+                        color: '#6b6b6b'
+                    },
+                    title: {
+                        display: true,
+                        text: 'Τελάρα',
+                        color: '#5a5a5a'
+                    }
+                },
+                x: {
+                    grid: {
+                        display: false
+                    },
+                    ticks: {
+                        color: '#6b6b6b'
+                    },
+                    title: {
+                        display: true,
+                        text: 'Περίοδοι',
+                        color: '#5a5a5a'
+                    }
+                }
+            }
+        }
+    });
 }
 

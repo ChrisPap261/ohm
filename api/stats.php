@@ -97,19 +97,16 @@ switch ($action) {
         $allMillStats = $stmt->fetch();
 
         $stmt = $db->prepare("SELECT 
-            COALESCE(SUM(CASE WHEN price_per_liter > 0 OR total_amount > 0 THEN oil_liters ELSE 0 END), 0) as total_oil_sold_paid,
-            COALESCE(SUM(CASE WHEN price_per_liter = 0 AND total_amount = 0 THEN oil_liters ELSE 0 END), 0) as total_oil_given_free
+            COALESCE(SUM(oil_liters), 0) as total_oil_sold_all
             FROM oil_sales
             WHERE user_id = ?");
         $stmt->execute([$userId]);
         $allOilSalesStats = $stmt->fetch();
 
         $allProduced = (int)($allMillStats['total_oil_kg'] ?? 0);
-        $allSoldLiters = (int)($allOilSalesStats['total_oil_sold_paid'] ?? 0);
-        $allGivenFreeLiters = (int)($allOilSalesStats['total_oil_given_free'] ?? 0);
+        $allSoldLiters = (int)($allOilSalesStats['total_oil_sold_all'] ?? 0);
         $allSoldKg = (int)round($allSoldLiters / 1.1);
-        $allGivenFreeKg = (int)round($allGivenFreeLiters / 1.1);
-        $overallRemainingOil = max($allProduced - $allSoldKg - $allGivenFreeKg, 0);
+        $overallRemainingOil = max($allProduced - $allSoldKg, 0);
         
         echo json_encode([
             'success' => true,

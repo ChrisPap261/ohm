@@ -113,6 +113,41 @@ switch ($action) {
         ]);
         break;
         
+    case 'oil_yield_by_season':
+        $stmt = $db->prepare("
+            SELECT 
+                s.id,
+                s.name,
+                COALESCE(SUM(mp.olives_kg), 0) AS total_olives_kg,
+                COALESCE(SUM(mp.oil_kg), 0) AS total_oil_kg
+            FROM seasons s
+            LEFT JOIN mill_processing mp 
+                ON s.id = mp.season_id 
+                AND mp.user_id = ?
+            WHERE s.user_id = ?
+            GROUP BY s.id, s.name
+            ORDER BY s.start_date ASC
+        ");
+        $stmt->execute([$userId, $userId]);
+        $rows = $stmt->fetchAll();
+        
+        $data = array_map(function($row) {
+            $olives = (float)$row['total_olives_kg'];
+            $oil = (float)$row['total_oil_kg'];
+            $yieldPercent = $olives > 0 ? round(($oil / $olives) * 100, 2) : 0;
+            
+            return [
+                'seasonId' => (int)$row['id'],
+                'seasonName' => $row['name'],
+                'totalOlivesKg' => $olives,
+                'totalOilKg' => $oil,
+                'yieldPercent' => $yieldPercent
+            ];
+        }, $rows);
+        
+        echo json_encode(['success' => true, 'data' => $data]);
+        break;
+        
     case 'harvests_by_field':
         $seasonId = $_GET['season_id'] ?? null;
         if (!$seasonId) {

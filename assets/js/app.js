@@ -19,13 +19,20 @@ $(document).ready(function() {
         }
     });
     
-    // Navigation
-    $('.sidebar-menu-link').on('click', function(e) {
+    // Navigation (leaf links)
+    $('.sidebar-menu').on('click', '.sidebar-menu-link[data-page]', function(e) {
         e.preventDefault();
         const page = $(this).data('page');
+        if (!page) return;
         navigateTo(page);
         // Close mobile menu after navigation
         $('.sidebar').removeClass('show');
+    });
+    
+    // Dropdown toggles
+    $('.sidebar-menu').on('click', '.sidebar-dropdown-toggle', function(e) {
+        e.preventDefault();
+        toggleSubmenu($(this));
     });
     
     // Logo click - navigate to dashboard
@@ -72,8 +79,10 @@ function navigateTo(page) {
     currentPage = page;
     
     // Update active menu item
-    $('.sidebar-menu-link').removeClass('active');
-    $(`.sidebar-menu-link[data-page="${page}"]`).addClass('active');
+    $('.sidebar-menu-link[data-page]').removeClass('active');
+    const $targetLink = $(`.sidebar-menu-link[data-page="${page}"]`);
+    $targetLink.addClass('active');
+    syncSubmenuState($targetLink);
     
     // Load page content
     switch(page) {
@@ -92,6 +101,9 @@ function navigateTo(page) {
         case 'oil_sales':
             loadOilSales();
             break;
+        case 'olive_sales':
+            loadOliveSales();
+            break;
         case 'customers':
             loadCustomers();
             break;
@@ -104,6 +116,50 @@ function navigateTo(page) {
         case 'analytics':
             loadAnalytics();
             break;
+    }
+}
+
+function toggleSubmenu($toggle) {
+    const $item = $toggle.closest('.sidebar-menu-item');
+    const $submenu = $item.find('.sidebar-submenu').first();
+    const isOpen = $item.hasClass('open');
+    
+    // Close other dropdowns
+    $('.sidebar-menu-item.has-children').not($item).removeClass('open')
+        .find('.sidebar-dropdown-toggle').attr('aria-expanded', 'false').end()
+        .find('.sidebar-submenu').slideUp(150);
+    
+    if (isOpen) {
+        $item.removeClass('open');
+        $submenu.stop(true, true).slideUp(150);
+        $toggle.attr('aria-expanded', 'false');
+    } else {
+        $item.addClass('open');
+        $submenu.stop(true, true).slideDown(150);
+        $toggle.attr('aria-expanded', 'true');
+    }
+}
+
+function syncSubmenuState($link) {
+    const $allDropdowns = $('.sidebar-menu-item.has-children');
+    const $submenus = $('.sidebar-submenu');
+    
+    // Reset dropdowns when no link is provided
+    if (!$link || !$link.length) {
+        $allDropdowns.removeClass('open').find('.sidebar-dropdown-toggle').attr('aria-expanded', 'false');
+        $submenus.hide();
+        return;
+    }
+    
+    const $submenu = $link.closest('.sidebar-submenu');
+    $allDropdowns.removeClass('open').find('.sidebar-dropdown-toggle').attr('aria-expanded', 'false');
+    $submenus.hide();
+    
+    if ($submenu.length) {
+        const $parentItem = $submenu.closest('.sidebar-menu-item');
+        $parentItem.addClass('open');
+        $submenu.show();
+        $parentItem.find('.sidebar-dropdown-toggle').attr('aria-expanded', 'true');
     }
 }
 

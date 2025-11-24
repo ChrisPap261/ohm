@@ -109,6 +109,10 @@ body {
     border-radius: 8px;
     transition: all 0.2s;
     cursor: pointer;
+    width: 100%;
+    border: none;
+    background: transparent;
+    text-align: left;
 }
 
 .sidebar-menu-link:hover {
@@ -124,6 +128,37 @@ body {
 .sidebar-menu-icon {
     width: 20px;
     height: 20px;
+}
+
+.sidebar-menu-item.has-children {
+    position: relative;
+}
+
+.sidebar-dropdown-toggle {
+    justify-content: space-between;
+}
+
+.sidebar-caret {
+    margin-left: auto;
+    font-size: 0.9rem;
+    transition: transform 0.2s ease;
+}
+
+.sidebar-menu-item.open .sidebar-caret {
+    transform: rotate(180deg);
+}
+
+.sidebar-submenu {
+    list-style: none;
+    margin-top: 0.25rem;
+    margin-left: 2.5rem;
+    padding-left: 0;
+    display: none;
+}
+
+.sidebar-submenu .sidebar-menu-link {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.9rem;
 }
 
 .sidebar-footer {

@@ -76,11 +76,24 @@ $user = $auth->getCurrentUser();
                         <span>Ελαιοτριβείο</span>
                     </a>
                 </li>
-                <li class="sidebar-menu-item">
-                    <a href="#" class="sidebar-menu-link" data-page="oil_sales">
-                        <span class="sidebar-menu-icon">🛢️</span>
-                        <span>Πωλήσεις Λαδιού</span>
+                <li class="sidebar-menu-item has-children">
+                    <a href="#" class="sidebar-menu-link sidebar-dropdown-toggle" aria-expanded="false">
+                        <span class="sidebar-menu-icon">🛒</span>
+                        <span>Πωλήσεις</span>
+                        <span class="sidebar-caret">▾</span>
                     </a>
+                    <ul class="sidebar-submenu">
+                        <li>
+                            <a href="#" class="sidebar-menu-link" data-page="oil_sales" data-parent="sales">
+                                <span>Ελαιόλαδο</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="sidebar-menu-link" data-page="olive_sales" data-parent="sales">
+                                <span>Ελιές</span>
+                            </a>
+                        </li>
+                    </ul>
                 </li>
                 <li class="sidebar-menu-item">
                     <a href="#" class="sidebar-menu-link" data-page="customers">
@@ -134,6 +147,7 @@ $user = $auth->getCurrentUser();
     <script src="assets/js/harvests.js"></script>
     <script src="assets/js/mill.js"></script>
     <script src="assets/js/oil_sales.js"></script>
+    <script src="assets/js/olive_sales.js"></script>
     <script src="assets/js/customers.js"></script>
     <script src="assets/js/transactions.js"></script>
     <script src="assets/js/seasons.js"></script>

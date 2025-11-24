@@ -758,6 +758,32 @@ body {
         font-size: 0.875rem;
         padding: 0.5rem;
     }
+    
+    /* Page title on mobile */
+    .page-title {
+        font-size: 1.5rem;
+    }
+    
+    /* Add buttons - show only white "+" on mobile */
+    .page-header .btn-primary {
+        font-size: 0;
+        padding: 0.625rem;
+        min-width: 40px;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0;
+    }
+    
+    .page-header .btn-primary::before {
+        content: '+';
+        font-size: 1.5rem;
+        color: white;
+        font-weight: 300;
+        line-height: 1;
+    }
 }
 
 /* Utilities */

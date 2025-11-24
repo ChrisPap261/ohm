@@ -101,6 +101,9 @@ function navigateTo(page) {
         case 'seasons':
             loadSeasons();
             break;
+        case 'analytics':
+            loadAnalytics();
+            break;
     }
 }
 

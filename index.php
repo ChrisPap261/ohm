@@ -53,6 +53,12 @@ $user = $auth->getCurrentUser();
                     </a>
                 </li>
                 <li class="sidebar-menu-item">
+                    <a href="#" class="sidebar-menu-link" data-page="analytics">
+                        <span class="sidebar-menu-icon">📈</span>
+                        <span>Analytics</span>
+                    </a>
+                </li>
+                <li class="sidebar-menu-item">
                     <a href="#" class="sidebar-menu-link" data-page="fields">
                         <span class="sidebar-menu-icon">🌾</span>
                         <span>Αγροτεμάχια</span>
@@ -131,5 +137,6 @@ $user = $auth->getCurrentUser();
     <script src="assets/js/customers.js"></script>
     <script src="assets/js/transactions.js"></script>
     <script src="assets/js/seasons.js"></script>
+    <script src="assets/js/analytics.js"></script>
 </body>
 </html>

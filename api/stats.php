@@ -99,17 +99,10 @@ switch ($action) {
         $stmt->execute([$userId]);
         $allOilSalesStats = $stmt->fetch();
 
-        $stmt = $db->prepare("SELECT COALESCE(SUM(oil_kg), 0) as total_inventory
-            FROM oil_inventory
-            WHERE user_id = ?");
-        $stmt->execute([$userId]);
-        $allInventoryStats = $stmt->fetch();
-
         $allProduced = (int)($allMillStats['total_oil_kg'] ?? 0);
         $allSoldLiters = (int)($allOilSalesStats['total_oil_sold'] ?? 0);
-        $allSoldKg = round($allSoldLiters / 1.1);
-        $allInventory = (int)($allInventoryStats['total_inventory'] ?? 0);
-        $overallRemainingOil = $allProduced - $allSoldKg + $allInventory;
+        $allSoldKg = (int)round($allSoldLiters / 1.1);
+        $overallRemainingOil = max($allProduced - $allSoldKg, 0);
         
         echo json_encode([
             'success' => true,

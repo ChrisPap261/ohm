@@ -37,8 +37,8 @@ function loadAnalytics() {
             <div class="card analytics-card">
                 <div class="card-header analytics-card-header analytics-card-header--with-controls">
                     <div>
-                        <h2 class="analytics-card-title">Απόδοση σε τελάρα ανά περίοδο</h2>
-                        <p class="analytics-card-subtitle">Σύνολο τελάρων ανά χρονιά, ανά αγροτεμάχιο ή συνολικά.</p>
+                        <h2 class="analytics-card-title">Παραγωγή σε κιλά ανά περίοδο</h2>
+                        <p class="analytics-card-subtitle">Σύνολο κιλών ελιάς ανά χρονιά, ανά αγροτεμάχιο ή συνολικά.</p>
                     </div>
                     <div class="analytics-card-controls">
                         <label for="field-yield-filter">Αγροτεμάχιο</label>
@@ -259,19 +259,27 @@ function renderFieldYieldChart(selectedField) {
     }
 
     const labels = seasons.map(season => season.name);
-    const values = seasons.map(season => {
+    const kgValues = [];
+    const crateValues = [];
+
+    seasons.forEach(season => {
         const seasonId = season.id;
         const seasonRecords = records.filter(record => record.seasonId === seasonId);
 
         if (selectedField === 'all') {
-            return seasonRecords.reduce((sum, record) => sum + record.totalCrates, 0);
+            const totalKg = seasonRecords.reduce((sum, record) => sum + (record.totalOlivesKg || 0), 0);
+            const totalCrates = seasonRecords.reduce((sum, record) => sum + (record.totalCrates || 0), 0);
+            kgValues.push(totalKg);
+            crateValues.push(totalCrates);
+            return;
         }
 
         const matched = seasonRecords.find(record => String(record.fieldId) === String(selectedField));
-        return matched ? matched.totalCrates : 0;
+        kgValues.push(matched ? (matched.totalOlivesKg || 0) : 0);
+        crateValues.push(matched ? (matched.totalCrates || 0) : 0);
     });
 
-    const hasData = values.some(value => value > 0);
+    const hasData = kgValues.some(value => value > 0);
 
     if (!hasData) {
         emptyState.show();
@@ -298,7 +306,8 @@ function renderFieldYieldChart(selectedField) {
             labels,
             datasets: [{
                 label: selectedFieldName,
-                data: values,
+                data: kgValues,
+                harvestCrates: crateValues,
                 borderColor: '#5f7631',
                 backgroundColor: 'rgba(139, 169, 82, 0.25)',
                 tension: 0.35,
@@ -323,7 +332,8 @@ function renderFieldYieldChart(selectedField) {
                 tooltip: {
                     callbacks: {
                         label: function(context) {
-                            return `${context.formattedValue} τελάρα`;
+                            const crates = context.dataset.harvestCrates?.[context.dataIndex] ?? 0;
+                            return `${context.formattedValue} kg (${crates} τελάρα)`;
                         }
                     }
                 }
@@ -335,11 +345,14 @@ function renderFieldYieldChart(selectedField) {
                         color: 'rgba(95, 118, 49, 0.15)'
                     },
                     ticks: {
-                        color: '#6b6b6b'
+                        color: '#6b6b6b',
+                        callback: function(value) {
+                            return value + ' kg';
+                        }
                     },
                     title: {
                         display: true,
-                        text: 'Τελάρα',
+                        text: 'Κιλά',
                         color: '#5a5a5a'
                     }
                 },

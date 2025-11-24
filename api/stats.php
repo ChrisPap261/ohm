@@ -191,7 +191,8 @@ switch ($action) {
                 s.name as season_name,
                 f.id as field_id,
                 f.name as field_name,
-                COALESCE(SUM(h.crates), 0) as total_crates
+                COALESCE(SUM(h.crates), 0) as total_crates,
+                COALESCE(SUM(h.olives_kg), 0) as total_olives_kg
             FROM seasons s
             JOIN harvests h ON s.id = h.season_id AND h.user_id = ?
             JOIN fields f ON h.field_id = f.id AND f.user_id = ?
@@ -230,7 +231,8 @@ switch ($action) {
                 'seasonName' => $row['season_name'],
                 'fieldId' => (int)$row['field_id'],
                 'fieldName' => $row['field_name'],
-                'totalCrates' => (int)$row['total_crates']
+                'totalCrates' => (int)$row['total_crates'],
+                'totalOlivesKg' => (int)$row['total_olives_kg']
             ];
         }, $records);
 

@@ -10,7 +10,7 @@ function loadAnalytics() {
     const content = `
         <div class="page-header">
             <div>
-                <h1 class="analytics-title">Analytics</h1>
+                <h1 class="analytics-title">Analytics 1</h1>
                 <p class="analytics-description">Συγκριτικά στατιστικά απόδοσης για όλες τις περιόδους.</p>
             </div>
         </div>
@@ -18,7 +18,7 @@ function loadAnalytics() {
             <div class="card analytics-card">
                 <div class="card-header analytics-card-header">
                     <div>
-                        <h2 class="analytics-card-title"Ποσοστό απόδοσης λαδιού/ελιάς</h2> 
+                        <h2 class="analytics-card-title">Ποσοστό απόδοσης λαδιού/ελιάς</h2>
                         <p class="analytics-card-subtitle">Μέσο ποσοστό κιλών λαδιού ανά κιλό ελιάς (σύνολο ανά περίοδο).</p>
                     </div>
                 </div>

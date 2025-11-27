@@ -107,7 +107,7 @@ function displayStats(data) {
                 <span class="stat-label">Παραγωγή Λαδιού</span>
                 <span class="stat-icon">🏭</span>
             </div>
-            <div class="stat-value">${data.mill.totalOilKg * 1.1}L (${(data.mill.totalOilKg).toFixed(0)}kg)</div>
+            <div class="stat-value">${(data.mill.totalOilKg * 1.1).toFixed(0)}L (${(data.mill.totalOilKg)}kg)</div>
             <div class="stat-subtitle">Κόστος: ${formatCurrency(data.mill.totalExpenses)}</div>
         </div>
         

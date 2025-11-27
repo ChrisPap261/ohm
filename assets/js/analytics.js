@@ -10,7 +10,7 @@ function loadAnalytics() {
     const content = `
         <div class="page-header">
             <div>
-                <h1 class="analytics-title">Analytics 1</h1>
+                <h1 class="analytics-title">Analytics</h1>
                 <p class="analytics-description">Συγκριτικά στατιστικά απόδοσης για όλες τις περιόδους.</p>
             </div>
         </div>

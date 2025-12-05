@@ -120,13 +120,13 @@ function displayStats(data) {
             <div class="stat-subtitle">Έσοδα: ${formatCurrency(data.oil.totalRevenue)}</div>
         </div>
         
-        <div class="stat-card" style="background: #89a54f; color: #ffffff;">
+        <div class="stat-card" style="border: 2px solid #89a54f;">
             <div class="stat-header">
-                <span class="stat-label" style="color: #ffffff;">Συν. Υπ. Λαδιού</span>
+                <span class="stat-label">Συν. Υπ. Λαδιού</span>
                 <span class="stat-icon">📦</span>
             </div>
-            <div class="stat-value" style="color: #ffffff;">${totalRemainingAllSeasons}kg (${totalRemainingAllSeasonsLiters}L)</div>
-            <div class="stat-subtitle" style="color: #ffffff;">Τρέχουσα περίοδος: ${currentSeasonRemaining}kg</div>
+            <div class="stat-value">${totalRemainingAllSeasons}kg (${totalRemainingAllSeasonsLiters}L)</div>
+            <div class="stat-subtitle">Τρέχουσα περίοδος: ${currentSeasonRemaining}kg</div>
         </div>
         
 

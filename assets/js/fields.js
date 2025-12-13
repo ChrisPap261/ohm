@@ -330,14 +330,13 @@ function displayFieldCard(field, seasonFilter = 'latest') {
             <div class="d-flex justify-content-between align-items-center">
                 <div>
                     <h1 class="page-title">Καρτέλα Αγροτεμαχίου</h1>
-                    <p class="page-description">${field.name}</p>
                 </div>
                 <div style="display: flex; gap: 1rem; align-items: center;">
                     <select id="field-card-season-select" class="form-control" autocomplete="off" style="width: auto; min-width: 150px;">
                         ${seasonOptions}
                     </select>
                     <button class="btn btn-secondary" onclick="loadFields()">
-                        ← Πίσω
+                        < Πίσω
                     </button>
                 </div>
             </div>

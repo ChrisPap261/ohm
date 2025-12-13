@@ -94,6 +94,11 @@ function displayFields(fields) {
         ],
         actions: [
             {
+                label: '🌾 Καρτέλα',
+                className: 'btn-primary btn-sm',
+                getOnClick: (f) => `viewFieldCard(${f.id})`
+            },
+            {
                 label: '✏️ Επεξεργασία',
                 className: 'btn-secondary btn-sm',
                 getOnClick: (f) => `editField(${JSON.stringify(f).replace(/"/g, '&quot;')})`
@@ -122,11 +127,14 @@ function displayFieldsTable(fields) {
             <td>${field.area ? field.area + ' τ.μ.' : '-'}</td>
             <td>${field.tree_count || '-'}</td>
             <td>
+                <button class="btn btn-primary btn-sm" onclick="viewFieldCard(${field.id})">
+                    🌾 Καρτέλα
+                </button>
                 <button class="btn btn-secondary btn-sm" onclick='editField(${JSON.stringify(field)})'>
-                    ✏️ Επεξεργασία
+                    ✏️
                 </button>
                 <button class="btn btn-secondary btn-sm" onclick="deleteField(${field.id})">
-                    🗑️ Διαγραφή
+                    🗑️
                 </button>
             </td>
         </tr>
@@ -209,4 +217,179 @@ function deleteField(id) {
             }
         }
     });
+}
+
+function viewFieldCard(fieldId) {
+    $.ajax({
+        url: `api/fields.php?action=get&id=${fieldId}`,
+        method: 'GET',
+        success: function(response) {
+            if (response.success) {
+                displayFieldCard(response.data);
+            } else {
+                showAlert('Σφάλμα κατά τη φόρτωση καρτέλας αγροτεμαχίου', 'danger');
+            }
+        },
+        error: function() {
+            showAlert('Σφάλμα κατά τη φόρτωση καρτέλας αγροτεμαχίου', 'danger');
+        }
+    });
+}
+
+function displayFieldCard(field) {
+    const harvests = field.harvests || [];
+    const stats = field.stats || {};
+    const area = field.area || 0;
+    const treeCount = field.tree_count || 0;
+    
+    // Calculate statistics
+    const totalHarvests = stats.totalHarvests || 0;
+    const totalCrates = stats.totalCrates || 0;
+    const totalOlivesKg = stats.totalOlivesKg || 0;
+    const avgKgPerCrate = stats.avgKgPerCrate || 22.5;
+    
+    // Average yield per stremma (kg per stremma)
+    const avgYieldPerStremma = area > 0 && totalHarvests > 0 ? (totalOlivesKg / area).toFixed(2) : '-';
+    
+    // Average yield per tree (kg per tree)
+    const avgYieldPerTree = treeCount > 0 && totalHarvests > 0 ? (totalOlivesKg / treeCount).toFixed(2) : '-';
+    
+    // Average crates per stremma
+    const avgCratesPerStremma = area > 0 && totalHarvests > 0 ? (totalCrates / area).toFixed(2) : '-';
+    
+    $('#page-content').html(`
+        <div class="page-header">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h1 class="page-title">Καρτέλα Αγροτεμαχίου</h1>
+                    <p class="page-description">${field.name}</p>
+                </div>
+                <button class="btn btn-secondary" onclick="loadFields()">
+                    ← Πίσω
+                </button>
+            </div>
+        </div>
+        
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-header">
+                    <span class="stat-label">Όνομα</span>
+                    <span class="stat-icon">🌾</span>
+                </div>
+                <div class="stat-value">${field.name}</div>
+                <div class="stat-subtitle">${field.location || 'Χωρίς τοποθεσία'}</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-header">
+                    <span class="stat-label">Συνολικές Συγκομιδές</span>
+                    <span class="stat-icon">🫒</span>
+                </div>
+                <div class="stat-value">${totalHarvests}</div>
+                <div class="stat-subtitle">${totalCrates} τελάρα, ${totalOlivesKg} kg</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-header">
+                    <span class="stat-label">Μέση Απόδοση ανά Τελάρο</span>
+                    <span class="stat-icon">📦</span>
+                </div>
+                <div class="stat-value">${avgKgPerCrate} kg</div>
+                <div class="stat-subtitle">Μέσος όρος κιλά/τελάρο</div>
+            </div>
+        </div>
+        
+        ${(area > 0 || treeCount > 0) ? `
+        <div class="stats-grid mt-3">
+            ${area > 0 ? `
+            <div class="stat-card">
+                <div class="stat-header">
+                    <span class="stat-label">Απόδοση ανά Τελάρο (τ.μ.)</span>
+                    <span class="stat-icon">📐</span>
+                </div>
+                <div class="stat-value">${avgYieldPerStremma !== '-' ? avgYieldPerStremma + ' kg' : '-'}</div>
+                <div class="stat-subtitle">${area} τ.μ. συνολικά</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-header">
+                    <span class="stat-label">Τελάρα ανά Τελάρο (τ.μ.)</span>
+                    <span class="stat-icon">📊</span>
+                </div>
+                <div class="stat-value">${avgCratesPerStremma !== '-' ? avgCratesPerStremma : '-'}</div>
+                <div class="stat-subtitle">Μέσος όρος τελάρα/τ.μ.</div>
+            </div>
+            ` : ''}
+            
+            ${treeCount > 0 ? `
+            <div class="stat-card">
+                <div class="stat-header">
+                    <span class="stat-label">Απόδοση ανά Δέντρο</span>
+                    <span class="stat-icon">🌳</span>
+                </div>
+                <div class="stat-value">${avgYieldPerTree !== '-' ? avgYieldPerTree + ' kg' : '-'}</div>
+                <div class="stat-subtitle">${treeCount} δέντρα συνολικά</div>
+            </div>
+            ` : ''}
+        </div>
+        ` : ''}
+        
+        <div class="card mt-3">
+            <div class="card-header">
+                <h3 class="card-title">Στοιχεία Αγροτεμαχίου</h3>
+                <p class="card-description">Βασικές πληροφορίες</p>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <p><strong>Όνομα:</strong> ${field.name}</p>
+                        <p><strong>Τοποθεσία:</strong> ${field.location || '-'}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><strong>Έκταση:</strong> ${area > 0 ? area + ' τ.μ.' : '-'}</p>
+                        <p><strong>Αριθμός Δέντρων:</strong> ${treeCount > 0 ? treeCount : '-'}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card mt-3">
+            <div class="card-header">
+                <h3 class="card-title">Ιστορικό Συγκομιδών</h3>
+                <p class="card-description">Όλες οι συγκομιδές του αγροτεμαχίου</p>
+            </div>
+            <div class="table-responsive">
+                <table class="table" id="field-harvests-table">
+                    <thead>
+                        <tr>
+                            <th>Ημερομηνία</th>
+                            <th>Περίοδος</th>
+                            <th>Τελάρα</th>
+                            <th>Κιλά Ελιών</th>
+                            <th>Kg/Τελάρο</th>
+                            <th>Σημειώσεις</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${harvests.length === 0 ? 
+                            '<tr><td colspan="6" class="text-center">Δεν υπάρχουν συγκομιδές</td></tr>' :
+                            harvests.map(h => {
+                                const kgPerCrate = h.crates > 0 ? (h.olives_kg / h.crates).toFixed(2) : '-';
+                                return `
+                                    <tr>
+                                        <td>${formatDate(h.harvest_date)}</td>
+                                        <td>${h.season_name || '-'}</td>
+                                        <td><strong>${h.crates}</strong></td>
+                                        <td><strong>${h.olives_kg} kg</strong></td>
+                                        <td>${kgPerCrate} kg</td>
+                                        <td>${h.notes || '-'}</td>
+                                    </tr>
+                                `;
+                            }).join('')
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    `);
 }

@@ -29,6 +29,34 @@ switch ($action) {
         $stmt->execute([$id, $userId]);
         $field = $stmt->fetch();
         if ($field) {
+            // Get harvest statistics
+            $stmt = $db->prepare("SELECT 
+                COUNT(*) as total_harvests,
+                SUM(crates) as total_crates,
+                SUM(olives_kg) as total_olives_kg,
+                AVG(olives_kg / NULLIF(crates, 0)) as avg_kg_per_crate
+                FROM harvests 
+                WHERE field_id = ? AND user_id = ?");
+            $stmt->execute([$id, $userId]);
+            $harvestStats = $stmt->fetch();
+            
+            // Get all harvests for this field
+            $stmt = $db->prepare("SELECT h.*, s.name as season_name 
+                FROM harvests h 
+                LEFT JOIN seasons s ON h.season_id = s.id 
+                WHERE h.field_id = ? AND h.user_id = ? 
+                ORDER BY h.harvest_date DESC");
+            $stmt->execute([$id, $userId]);
+            $harvests = $stmt->fetchAll();
+            
+            $field['harvests'] = $harvests;
+            $field['stats'] = [
+                'totalHarvests' => (int)($harvestStats['total_harvests'] ?? 0),
+                'totalCrates' => (int)($harvestStats['total_crates'] ?? 0),
+                'totalOlivesKg' => (int)($harvestStats['total_olives_kg'] ?? 0),
+                'avgKgPerCrate' => $harvestStats['avg_kg_per_crate'] ? round((float)$harvestStats['avg_kg_per_crate'], 2) : 22.5
+            ];
+            
             echo json_encode(['success' => true, 'data' => $field]);
         } else {
             echo json_encode(['success' => false, 'error' => 'Field not found']);

@@ -219,13 +219,42 @@ function deleteField(id) {
     });
 }
 
+let currentFieldId = null;
+let currentSeasonFilter = null;
+
 function viewFieldCard(fieldId) {
+    currentFieldId = fieldId;
+    // Get seasons list to find the latest one
     $.ajax({
-        url: `api/fields.php?action=get&id=${fieldId}`,
+        url: 'api/seasons.php?action=list',
+        method: 'GET',
+        success: function(seasonsResponse) {
+            if (seasonsResponse.success && seasonsResponse.data.length > 0) {
+                const seasons = seasonsResponse.data;
+                const latestSeasonId = seasons[0].id; // First one is latest (ordered by start_date DESC)
+                loadFieldCardData(fieldId, latestSeasonId.toString());
+            } else {
+                // No seasons, load all data
+                loadFieldCardData(fieldId, 'all');
+            }
+        },
+        error: function() {
+            // On error, load all data
+            loadFieldCardData(fieldId, 'all');
+        }
+    });
+}
+
+function loadFieldCardData(fieldId, seasonFilter) {
+    currentSeasonFilter = seasonFilter;
+    const url = `api/fields.php?action=get&id=${fieldId}&season=${seasonFilter}`;
+    
+    $.ajax({
+        url: url,
         method: 'GET',
         success: function(response) {
             if (response.success) {
-                displayFieldCard(response.data);
+                displayFieldCard(response.data, seasonFilter);
             } else {
                 showAlert('Σφάλμα κατά τη φόρτωση καρτέλας αγροτεμαχίου', 'danger');
             }
@@ -236,37 +265,85 @@ function viewFieldCard(fieldId) {
     });
 }
 
-function displayFieldCard(field) {
+function displayFieldCard(field, seasonFilter = 'latest') {
     const harvests = field.harvests || [];
     const stats = field.stats || {};
     const area = field.area || 0;
     const treeCount = field.tree_count || 0;
     
     // Calculate statistics
-    const totalHarvests = stats.totalHarvests || 0;
-    const totalCrates = stats.totalCrates || 0;
-    const totalOlivesKg = stats.totalOlivesKg || 0;
+    let totalHarvests = stats.totalHarvests || 0;
+    let totalCrates = stats.totalCrates || 0;
+    let totalOlivesKg = stats.totalOlivesKg || 0;
     const avgKgPerCrate = stats.avgKgPerCrate || 22.5;
     
+    // For average mode, show decimal values
+    const isAverageMode = seasonFilter === 'average';
+    const isTotalMode = seasonFilter === 'all';
+    
     // Average yield per stremma (kg per stremma)
-    const avgYieldPerStremma = area > 0 && totalHarvests > 0 ? (totalOlivesKg / area).toFixed(2) : '-';
+    const avgYieldPerStremma = area > 0 && totalHarvests > 0 
+        ? (totalOlivesKg / area).toFixed(isAverageMode ? 2 : 0) 
+        : '-';
     
     // Average yield per tree (kg per tree)
-    const avgYieldPerTree = treeCount > 0 && totalHarvests > 0 ? (totalOlivesKg / treeCount).toFixed(2) : '-';
+    const avgYieldPerTree = treeCount > 0 && totalHarvests > 0 
+        ? (totalOlivesKg / treeCount).toFixed(isAverageMode ? 2 : 0) 
+        : '-';
     
     // Average crates per stremma
-    const avgCratesPerStremma = area > 0 && totalHarvests > 0 ? (totalCrates / area).toFixed(2) : '-';
+    const avgCratesPerStremma = area > 0 && totalHarvests > 0 
+        ? (totalCrates / area).toFixed(isAverageMode ? 2 : 0) 
+        : '-';
     
-    $('#page-content').html(`
+    // Format values based on mode
+    const formatValue = (val) => {
+        if (val === 0 || val === '-') return val;
+        return isAverageMode ? parseFloat(val).toFixed(2) : Math.round(val);
+    };
+    
+    totalHarvests = formatValue(totalHarvests);
+    totalCrates = formatValue(totalCrates);
+    totalOlivesKg = formatValue(totalOlivesKg);
+    
+    // Load seasons for dropdown
+    $.ajax({
+        url: 'api/seasons.php?action=list',
+        method: 'GET',
+        success: function(response) {
+            if (response.success) {
+                const seasons = response.data;
+                const latestSeason = seasons.length > 0 ? seasons[0] : null;
+                
+                // Determine which option should be selected
+                let selectedValue = seasonFilter;
+                if (seasonFilter === 'latest' && latestSeason) {
+                    selectedValue = latestSeason.id.toString();
+                }
+                
+                const seasonOptions = `
+                    <option value="all" ${selectedValue === 'all' ? 'selected' : ''}>Συνολικά</option>
+                    <option value="average" ${selectedValue === 'average' ? 'selected' : ''}>Μέσος όρος</option>
+                    ${seasons.map(s => 
+                        `<option value="${s.id}" ${selectedValue === s.id.toString() ? 'selected' : ''}>${s.name}</option>`
+                    ).join('')}
+                `;
+                
+                $('#page-content').html(`
         <div class="page-header">
             <div class="d-flex justify-content-between align-items-center">
                 <div>
                     <h1 class="page-title">Καρτέλα Αγροτεμαχίου</h1>
                     <p class="page-description">${field.name}</p>
                 </div>
-                <button class="btn btn-secondary" onclick="loadFields()">
-                    ← Πίσω
-                </button>
+                <div style="display: flex; gap: 1rem; align-items: center;">
+                    <select id="field-card-season-select" class="form-control" autocomplete="off" style="width: auto; min-width: 150px;">
+                        ${seasonOptions}
+                    </select>
+                    <button class="btn btn-secondary" onclick="loadFields()">
+                        ← Πίσω
+                    </button>
+                </div>
             </div>
         </div>
         
@@ -282,7 +359,7 @@ function displayFieldCard(field) {
             
             <div class="stat-card">
                 <div class="stat-header">
-                    <span class="stat-label">Συνολικές Συγκομιδές</span>
+                    <span class="stat-label">${isAverageMode ? 'Μέσες' : 'Συνολικές'} Συγκομιδές</span>
                     <span class="stat-icon">🫒</span>
                 </div>
                 <div class="stat-value">${totalHarvests}</div>
@@ -356,7 +433,7 @@ function displayFieldCard(field) {
         <div class="card mt-3">
             <div class="card-header">
                 <h3 class="card-title">Ιστορικό Συγκομιδών</h3>
-                <p class="card-description">Όλες οι συγκομιδές του αγροτεμαχίου</p>
+                <p class="card-description">${isAverageMode ? 'Όλες οι συγκομιδές (για υπολογισμό μέσου όρου)' : isTotalMode ? 'Όλες οι συγκομιδές από όλες τις περιόδους' : 'Συγκομιδές της επιλεγμένης περιόδου'}</p>
             </div>
             <div class="table-responsive">
                 <table class="table" id="field-harvests-table">
@@ -392,4 +469,13 @@ function displayFieldCard(field) {
             </div>
         </div>
     `);
+                
+                // Add event listener for dropdown change
+                $('#field-card-season-select').off('change').on('change', function() {
+                    const selectedValue = $(this).val();
+                    loadFieldCardData(currentFieldId, selectedValue);
+                });
+            }
+        }
+    });
 }

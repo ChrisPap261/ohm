@@ -25,36 +25,102 @@ switch ($action) {
         
     case 'get':
         $id = $_GET['id'] ?? 0;
+        $seasonFilter = $_GET['season'] ?? 'all'; // 'all', 'average', or season_id
         $stmt = $db->prepare("SELECT * FROM fields WHERE id = ? AND user_id = ?");
         $stmt->execute([$id, $userId]);
         $field = $stmt->fetch();
         if ($field) {
-            // Get harvest statistics
-            $stmt = $db->prepare("SELECT 
-                COUNT(*) as total_harvests,
-                SUM(crates) as total_crates,
-                SUM(olives_kg) as total_olives_kg,
-                AVG(olives_kg / NULLIF(crates, 0)) as avg_kg_per_crate
-                FROM harvests 
-                WHERE field_id = ? AND user_id = ?");
-            $stmt->execute([$id, $userId]);
-            $harvestStats = $stmt->fetch();
+            $harvestStats = null;
+            $harvests = [];
             
-            // Get all harvests for this field
-            $stmt = $db->prepare("SELECT h.*, s.name as season_name 
-                FROM harvests h 
-                LEFT JOIN seasons s ON h.season_id = s.id 
-                WHERE h.field_id = ? AND h.user_id = ? 
-                ORDER BY h.harvest_date DESC");
-            $stmt->execute([$id, $userId]);
-            $harvests = $stmt->fetchAll();
+            if ($seasonFilter === 'all') {
+                // Get all harvests statistics
+                $stmt = $db->prepare("SELECT 
+                    COUNT(*) as total_harvests,
+                    SUM(crates) as total_crates,
+                    SUM(olives_kg) as total_olives_kg,
+                    AVG(olives_kg / NULLIF(crates, 0)) as avg_kg_per_crate
+                    FROM harvests 
+                    WHERE field_id = ? AND user_id = ?");
+                $stmt->execute([$id, $userId]);
+                $harvestStats = $stmt->fetch();
+                
+                // Get all harvests for this field
+                $stmt = $db->prepare("SELECT h.*, s.name as season_name 
+                    FROM harvests h 
+                    LEFT JOIN seasons s ON h.season_id = s.id 
+                    WHERE h.field_id = ? AND h.user_id = ? 
+                    ORDER BY h.harvest_date DESC");
+                $stmt->execute([$id, $userId]);
+                $harvests = $stmt->fetchAll();
+            } elseif ($seasonFilter === 'average') {
+                // Get average statistics per season
+                $stmt = $db->prepare("SELECT 
+                    COUNT(DISTINCT season_id) as season_count,
+                    AVG(season_harvests) as avg_harvests,
+                    AVG(season_crates) as avg_crates,
+                    AVG(season_olives_kg) as avg_olives_kg,
+                    AVG(season_avg_kg_per_crate) as avg_kg_per_crate
+                    FROM (
+                        SELECT 
+                            season_id,
+                            COUNT(*) as season_harvests,
+                            SUM(crates) as season_crates,
+                            SUM(olives_kg) as season_olives_kg,
+                            AVG(olives_kg / NULLIF(crates, 0)) as season_avg_kg_per_crate
+                        FROM harvests 
+                        WHERE field_id = ? AND user_id = ?
+                        GROUP BY season_id
+                    ) as season_stats");
+                $stmt->execute([$id, $userId]);
+                $avgStats = $stmt->fetch();
+                
+                $harvestStats = [
+                    'total_harvests' => $avgStats['avg_harvests'] ? round((float)$avgStats['avg_harvests'], 2) : 0,
+                    'total_crates' => $avgStats['avg_crates'] ? round((float)$avgStats['avg_crates'], 2) : 0,
+                    'total_olives_kg' => $avgStats['avg_olives_kg'] ? round((float)$avgStats['avg_olives_kg'], 2) : 0,
+                    'avg_kg_per_crate' => $avgStats['avg_kg_per_crate'] ? round((float)$avgStats['avg_kg_per_crate'], 2) : 22.5,
+                    'season_count' => (int)($avgStats['season_count'] ?? 0)
+                ];
+                
+                // Get all harvests for display
+                $stmt = $db->prepare("SELECT h.*, s.name as season_name 
+                    FROM harvests h 
+                    LEFT JOIN seasons s ON h.season_id = s.id 
+                    WHERE h.field_id = ? AND h.user_id = ? 
+                    ORDER BY h.harvest_date DESC");
+                $stmt->execute([$id, $userId]);
+                $harvests = $stmt->fetchAll();
+            } else {
+                // Get statistics for specific season
+                $seasonId = (int)$seasonFilter;
+                $stmt = $db->prepare("SELECT 
+                    COUNT(*) as total_harvests,
+                    SUM(crates) as total_crates,
+                    SUM(olives_kg) as total_olives_kg,
+                    AVG(olives_kg / NULLIF(crates, 0)) as avg_kg_per_crate
+                    FROM harvests 
+                    WHERE field_id = ? AND user_id = ? AND season_id = ?");
+                $stmt->execute([$id, $userId, $seasonId]);
+                $harvestStats = $stmt->fetch();
+                
+                // Get harvests for this season
+                $stmt = $db->prepare("SELECT h.*, s.name as season_name 
+                    FROM harvests h 
+                    LEFT JOIN seasons s ON h.season_id = s.id 
+                    WHERE h.field_id = ? AND h.user_id = ? AND h.season_id = ?
+                    ORDER BY h.harvest_date DESC");
+                $stmt->execute([$id, $userId, $seasonId]);
+                $harvests = $stmt->fetchAll();
+            }
             
             $field['harvests'] = $harvests;
             $field['stats'] = [
                 'totalHarvests' => (int)($harvestStats['total_harvests'] ?? 0),
                 'totalCrates' => (int)($harvestStats['total_crates'] ?? 0),
                 'totalOlivesKg' => (int)($harvestStats['total_olives_kg'] ?? 0),
-                'avgKgPerCrate' => $harvestStats['avg_kg_per_crate'] ? round((float)$harvestStats['avg_kg_per_crate'], 2) : 22.5
+                'avgKgPerCrate' => $harvestStats['avg_kg_per_crate'] ? round((float)$harvestStats['avg_kg_per_crate'], 2) : 22.5,
+                'seasonCount' => isset($harvestStats['season_count']) ? (int)$harvestStats['season_count'] : null
             ];
             
             echo json_encode(['success' => true, 'data' => $field]);

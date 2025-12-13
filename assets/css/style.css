@@ -217,7 +217,7 @@ body {
 }
 
 .page-title {
-    font-size: 2rem;
+    font-size: 1.5rem;
     font-weight: 700;
     color: var(--text);
     /* margin-bottom: 0.5rem; */
@@ -225,7 +225,7 @@ body {
 
 .page-description {
     color: var(--text-muted);
-    font-size: 0.875rem;
+    font-size: 1rem;
 }
 
 .analytics-title {
@@ -365,7 +365,7 @@ body {
 }
 
 .stat-value {
-    font-size: 1.5rem;
+    font-size: 1.2rem;
     font-weight: 700;
     color: var(--text);
     /* margin-bottom: 0.25rem; */
@@ -380,7 +380,7 @@ body {
 }
 
 .stat-subtitle {
-    font-size: 0.9rem;
+    font-size: 1rem;
     color: var(--text-muted);
 }
 

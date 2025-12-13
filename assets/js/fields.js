@@ -302,11 +302,6 @@ function displayFieldCard(field, seasonFilter = 'latest') {
         ? (totalOlivesKg / treeCount).toFixed(isAverageMode ? 2 : 1) 
         : '-';
     
-    // Κιλά ανά στρέμμα
-    const kgPerStremma = area > 0 && totalOlivesKg > 0 
-        ? (totalOlivesKg / area).toFixed(isAverageMode ? 2 : 1) 
-        : '-';
-    
     // Load seasons for dropdown
     $.ajax({
         url: 'api/seasons.php?action=list',
@@ -349,10 +344,6 @@ function displayFieldCard(field, seasonFilter = 'latest') {
         </div>
         
         <div class="card mt-3">
-            <div class="card-header">
-                <h3 class="card-title">Στοιχεία Αγροτεμαχίου</h3>
-                <p class="card-description">Βασικές πληροφορίες</p>
-            </div>
             <div class="card-body">
                 <div class="row">
                     <div class="col-md-6">
@@ -373,8 +364,8 @@ function displayFieldCard(field, seasonFilter = 'latest') {
                     <span class="stat-label">${isAverageMode ? 'Μέσες' : 'Συνολικές'} Συγκομιδές</span>
                     <span class="stat-icon">🫒</span>
                 </div>
-                <div class="stat-value">${totalHarvests}</div>
-                <div class="stat-subtitle">${totalCrates} τελάρα, ${totalOlivesKg} kg</div>
+                <div class="stat-value">${totalCrates} τελάρα</div>
+                <div class="stat-subtitle">${totalOlivesKg} kg</div>
             </div>
             
             ${treeCount > 0 ? `
@@ -394,17 +385,6 @@ function displayFieldCard(field, seasonFilter = 'latest') {
                 </div>
                 <div class="stat-value">${kgPerTree !== '-' ? kgPerTree + ' kg' : '-'}</div>
                 <div class="stat-subtitle">${treeCount} δέντρα συνολικά</div>
-            </div>
-            ` : ''}
-            
-            ${area > 0 ? `
-            <div class="stat-card">
-                <div class="stat-header">
-                    <span class="stat-label">Κιλά ανά στρέμμα</span>
-                    <span class="stat-icon">📐</span>
-                </div>
-                <div class="stat-value">${kgPerStremma !== '-' ? kgPerStremma + ' kg' : '-'}</div>
-                <div class="stat-subtitle">${area} τ.μ. συνολικά</div>
             </div>
             ` : ''}
         </div>

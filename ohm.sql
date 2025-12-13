@@ -142,6 +142,7 @@ CREATE TABLE `olive_sales` (
   `id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
   `season_id` int(11) NOT NULL,
+  `customer_id` int(11) DEFAULT NULL,
   `sale_date` date NOT NULL,
   `olives_kg` int(11) NOT NULL,
   `price_per_kg` int(11) NOT NULL COMMENT 'Price in cents',
@@ -149,7 +150,9 @@ CREATE TABLE `olive_sales` (
   `buyer` varchar(255) DEFAULT NULL,
   `notes` text DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `delivered` tinyint(1) NOT NULL DEFAULT 0,
+  `paid` tinyint(1) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
@@ -269,7 +272,8 @@ ALTER TABLE `olive_sales`
   ADD PRIMARY KEY (`id`),
   ADD KEY `season_id` (`season_id`),
   ADD KEY `idx_user_season` (`user_id`,`season_id`),
-  ADD KEY `idx_date` (`sale_date`);
+  ADD KEY `idx_date` (`sale_date`),
+  ADD KEY `idx_customer_id` (`customer_id`);
 
 --
 -- Indexes for table `seasons`
@@ -403,7 +407,8 @@ ALTER TABLE `oil_sales`
 --
 ALTER TABLE `olive_sales`
   ADD CONSTRAINT `olive_sales_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `olive_sales_ibfk_2` FOREIGN KEY (`season_id`) REFERENCES `seasons` (`id`) ON DELETE CASCADE;
+  ADD CONSTRAINT `olive_sales_ibfk_2` FOREIGN KEY (`season_id`) REFERENCES `seasons` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `olive_sales_ibfk_3` FOREIGN KEY (`customer_id`) REFERENCES `customers` (`id`) ON DELETE SET NULL;
 
 --
 -- Constraints for table `seasons`

@@ -281,21 +281,6 @@ function displayFieldCard(field, seasonFilter = 'latest') {
     const isAverageMode = seasonFilter === 'average';
     const isTotalMode = seasonFilter === 'all';
     
-    // Average yield per stremma (kg per stremma)
-    const avgYieldPerStremma = area > 0 && totalHarvests > 0 
-        ? (totalOlivesKg / area).toFixed(isAverageMode ? 2 : 0) 
-        : '-';
-    
-    // Average yield per tree (kg per tree)
-    const avgYieldPerTree = treeCount > 0 && totalHarvests > 0 
-        ? (totalOlivesKg / treeCount).toFixed(isAverageMode ? 2 : 0) 
-        : '-';
-    
-    // Average crates per stremma
-    const avgCratesPerStremma = area > 0 && totalHarvests > 0 
-        ? (totalCrates / area).toFixed(isAverageMode ? 2 : 0) 
-        : '-';
-    
     // Format values based on mode
     const formatValue = (val) => {
         if (val === 0 || val === '-') return val;
@@ -305,6 +290,22 @@ function displayFieldCard(field, seasonFilter = 'latest') {
     totalHarvests = formatValue(totalHarvests);
     totalCrates = formatValue(totalCrates);
     totalOlivesKg = formatValue(totalOlivesKg);
+    
+    // Calculate new statistics
+    // Τελάρα ανά Δέντρο
+    const cratesPerTree = treeCount > 0 && totalCrates > 0 
+        ? (totalCrates / treeCount).toFixed(isAverageMode ? 2 : 1) 
+        : '-';
+    
+    // Κιλά ανά Δέντρο
+    const kgPerTree = treeCount > 0 && totalOlivesKg > 0 
+        ? (totalOlivesKg / treeCount).toFixed(isAverageMode ? 2 : 1) 
+        : '-';
+    
+    // Κιλά ανά στρέμμα
+    const kgPerStremma = area > 0 && totalOlivesKg > 0 
+        ? (totalOlivesKg / area).toFixed(isAverageMode ? 2 : 1) 
+        : '-';
     
     // Load seasons for dropdown
     $.ajax({
@@ -347,70 +348,6 @@ function displayFieldCard(field, seasonFilter = 'latest') {
             </div>
         </div>
         
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-header">
-                    <span class="stat-label">Όνομα</span>
-                    <span class="stat-icon">🌾</span>
-                </div>
-                <div class="stat-value">${field.name}</div>
-                <div class="stat-subtitle">${field.location || 'Χωρίς τοποθεσία'}</div>
-            </div>
-            
-            <div class="stat-card">
-                <div class="stat-header">
-                    <span class="stat-label">${isAverageMode ? 'Μέσες' : 'Συνολικές'} Συγκομιδές</span>
-                    <span class="stat-icon">🫒</span>
-                </div>
-                <div class="stat-value">${totalHarvests}</div>
-                <div class="stat-subtitle">${totalCrates} τελάρα, ${totalOlivesKg} kg</div>
-            </div>
-            
-            <div class="stat-card">
-                <div class="stat-header">
-                    <span class="stat-label">Μέση Απόδοση ανά Τελάρο</span>
-                    <span class="stat-icon">📦</span>
-                </div>
-                <div class="stat-value">${avgKgPerCrate} kg</div>
-                <div class="stat-subtitle">Μέσος όρος κιλά/τελάρο</div>
-            </div>
-        </div>
-        
-        ${(area > 0 || treeCount > 0) ? `
-        <div class="stats-grid mt-3">
-            ${area > 0 ? `
-            <div class="stat-card">
-                <div class="stat-header">
-                    <span class="stat-label">Απόδοση ανά Τελάρο (τ.μ.)</span>
-                    <span class="stat-icon">📐</span>
-                </div>
-                <div class="stat-value">${avgYieldPerStremma !== '-' ? avgYieldPerStremma + ' kg' : '-'}</div>
-                <div class="stat-subtitle">${area} τ.μ. συνολικά</div>
-            </div>
-            
-            <div class="stat-card">
-                <div class="stat-header">
-                    <span class="stat-label">Τελάρα ανά Τελάρο (τ.μ.)</span>
-                    <span class="stat-icon">📊</span>
-                </div>
-                <div class="stat-value">${avgCratesPerStremma !== '-' ? avgCratesPerStremma : '-'}</div>
-                <div class="stat-subtitle">Μέσος όρος τελάρα/τ.μ.</div>
-            </div>
-            ` : ''}
-            
-            ${treeCount > 0 ? `
-            <div class="stat-card">
-                <div class="stat-header">
-                    <span class="stat-label">Απόδοση ανά Δέντρο</span>
-                    <span class="stat-icon">🌳</span>
-                </div>
-                <div class="stat-value">${avgYieldPerTree !== '-' ? avgYieldPerTree + ' kg' : '-'}</div>
-                <div class="stat-subtitle">${treeCount} δέντρα συνολικά</div>
-            </div>
-            ` : ''}
-        </div>
-        ` : ''}
-        
         <div class="card mt-3">
             <div class="card-header">
                 <h3 class="card-title">Στοιχεία Αγροτεμαχίου</h3>
@@ -428,6 +365,48 @@ function displayFieldCard(field, seasonFilter = 'latest') {
                     </div>
                 </div>
             </div>
+        </div>
+        
+        <div class="stats-grid mt-3">
+            <div class="stat-card">
+                <div class="stat-header">
+                    <span class="stat-label">${isAverageMode ? 'Μέσες' : 'Συνολικές'} Συγκομιδές</span>
+                    <span class="stat-icon">🫒</span>
+                </div>
+                <div class="stat-value">${totalHarvests}</div>
+                <div class="stat-subtitle">${totalCrates} τελάρα, ${totalOlivesKg} kg</div>
+            </div>
+            
+            ${treeCount > 0 ? `
+            <div class="stat-card">
+                <div class="stat-header">
+                    <span class="stat-label">Τελάρα ανά Δέντρο</span>
+                    <span class="stat-icon">🌳</span>
+                </div>
+                <div class="stat-value">${cratesPerTree !== '-' ? cratesPerTree : '-'}</div>
+                <div class="stat-subtitle">${treeCount} δέντρα συνολικά</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-header">
+                    <span class="stat-label">Κιλά ανά Δέντρο</span>
+                    <span class="stat-icon">🌳</span>
+                </div>
+                <div class="stat-value">${kgPerTree !== '-' ? kgPerTree + ' kg' : '-'}</div>
+                <div class="stat-subtitle">${treeCount} δέντρα συνολικά</div>
+            </div>
+            ` : ''}
+            
+            ${area > 0 ? `
+            <div class="stat-card">
+                <div class="stat-header">
+                    <span class="stat-label">Κιλά ανά στρέμμα</span>
+                    <span class="stat-icon">📐</span>
+                </div>
+                <div class="stat-value">${kgPerStremma !== '-' ? kgPerStremma + ' kg' : '-'}</div>
+                <div class="stat-subtitle">${area} τ.μ. συνολικά</div>
+            </div>
+            ` : ''}
         </div>
         
         <div class="card mt-3">

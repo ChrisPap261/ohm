@@ -43,6 +43,7 @@ create trigger on_auth_user_created
 create or replace function public.set_updated_at()
 returns trigger
 language plpgsql
+set search_path = public
 as $$
 begin
   new.updated_at = now();
@@ -84,6 +85,7 @@ create or replace function public.activate_season(p_season_id uuid)
 returns public.seasons
 language plpgsql
 security invoker
+set search_path = public
 as $$
 declare
   v_user uuid := auth.uid();
@@ -439,4 +441,6 @@ as $$
   limit 1;
 $$;
 
+revoke all on function public.handle_new_user() from public, anon, authenticated;
+revoke all on function public.email_for_username(text) from public;
 grant execute on function public.email_for_username(text) to anon, authenticated;

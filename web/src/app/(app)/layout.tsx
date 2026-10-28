@@ -1,15 +1,7 @@
 "use client";
 
-import { AuthGate } from "@/components/shell/auth-gate";
-import { DataLoadingGate } from "@/components/shell/data-loading-gate";
-import { AppShell } from "@/components/shell/sidebar";
+import { AppContentGate } from "@/components/shell/content-loading";
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
-  return (
-    <AuthGate>
-      <AppShell>
-        <DataLoadingGate>{children}</DataLoadingGate>
-      </AppShell>
-    </AuthGate>
-  );
+  return <AppContentGate>{children}</AppContentGate>;
 }

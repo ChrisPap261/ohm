@@ -16,7 +16,7 @@ function SkeletonBar({
 }) {
   return (
     <div
-      className={`animate-pulse rounded-[var(--radius-md)] bg-[var(--color-accent-muted)] ${className}`}
+      className={`animate-pulse rounded-[var(--radius-md)] bg-[#d4e5dc] ${className}`}
       aria-hidden
     />
   );
@@ -28,7 +28,7 @@ export function ContentLoading({ label }: { label: string }) {
       role="status"
       aria-live="polite"
       aria-busy="true"
-      className="min-h-[50vh] space-y-6"
+      className="space-y-6 py-4"
     >
       <span className="sr-only">{label}</span>
       <div className="flex flex-wrap items-start justify-between gap-4">
@@ -52,31 +52,34 @@ export function ContentLoading({ label }: { label: string }) {
         ))}
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-2">
-        <div className="rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-5 shadow-[var(--shadow-card)]">
-          <SkeletonBar className="mb-2 h-5 w-40" />
-          <SkeletonBar className="mb-4 h-4 w-56" />
-          <SkeletonBar className="h-[280px] w-full" />
-        </div>
-        <div className="rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-5 shadow-[var(--shadow-card)]">
-          <SkeletonBar className="mb-2 h-5 w-36" />
-          <SkeletonBar className="mb-4 h-4 w-52" />
-          <SkeletonBar className="mx-auto h-[280px] w-[280px] max-w-full rounded-full" />
-        </div>
-      </div>
+      <ContentSpinner label={label} />
+    </div>
+  );
+}
 
-      <div className="flex items-center justify-center gap-3 pt-4 text-sm font-medium text-[var(--color-text)]">
-        <div
-          className="h-6 w-6 animate-spin rounded-full border-2 border-[var(--color-accent-muted)] border-t-[var(--color-accent)]"
-          aria-hidden
-        />
-        {label}
+function ContentLoadingOverlay({
+  label,
+  children,
+}: {
+  label: string;
+  children: ReactNode;
+}) {
+  return (
+    <div className="relative min-h-[40vh]">
+      <div
+        className="pointer-events-none absolute inset-0 z-20 flex items-start justify-center bg-[var(--color-bg)]/90 pt-12 backdrop-blur-[1px]"
+        aria-hidden={false}
+      >
+        <ContentSpinner label={label} />
+      </div>
+      <div className="pointer-events-none opacity-30" aria-hidden>
+        {children}
       </div>
     </div>
   );
 }
 
-/** App shell with sidebar; content shows skeleton until session + data are ready. */
+/** App shell with sidebar; overlays loading on content without unmounting routes. */
 export function AppContentGate({ children }: { children: React.ReactNode }) {
   const { ready, profile, dataReady } = useStore();
   const { isNavigating } = useNavigationLoading();
@@ -86,17 +89,26 @@ export function AppContentGate({ children }: { children: React.ReactNode }) {
     if (ready && !profile) router.replace("/login");
   }, [ready, profile, router]);
 
-  const loadingLabel =
+  const dataLoadingLabel =
     !ready ? "Φόρτωση…" : !profile ? "Ανακατεύθυνση…" : "Φόρτωση δεδομένων…";
 
   const showDataLoading =
     !ready || !profile || (profile !== null && !dataReady);
 
   let body: ReactNode = children;
+
   if (showDataLoading) {
-    body = <ContentLoading label={loadingLabel} />;
+    body = (
+      <ContentLoadingOverlay label={dataLoadingLabel}>
+        {children}
+      </ContentLoadingOverlay>
+    );
   } else if (isNavigating) {
-    body = <ContentSpinner label="Φόρτωση σελίδας…" />;
+    body = (
+      <ContentLoadingOverlay label="Φόρτωση σελίδας…">
+        {children}
+      </ContentLoadingOverlay>
+    );
   }
 
   return <AppShell>{body}</AppShell>;

@@ -29,13 +29,13 @@ function normalizePath(href: string): string {
 export function NavigationProvider({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const [isNavigating, setIsNavigating] = useState(false);
-  const targetPath = useRef<string | null>(null);
+  const fromPath = useRef<string | null>(null);
 
   const startNavigation = useCallback(
     (href: string) => {
       const next = normalizePath(href);
       if (next === pathname) return;
-      targetPath.current = next;
+      fromPath.current = pathname;
       setIsNavigating(true);
     },
     [pathname],
@@ -43,12 +43,20 @@ export function NavigationProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (!isNavigating) return;
-    const target = targetPath.current;
-    if (target && pathname === target) {
-      targetPath.current = null;
+    if (pathname !== fromPath.current) {
+      fromPath.current = null;
       setIsNavigating(false);
     }
   }, [pathname, isNavigating]);
+
+  useEffect(() => {
+    if (!isNavigating) return;
+    const timeout = window.setTimeout(() => {
+      fromPath.current = null;
+      setIsNavigating(false);
+    }, 15000);
+    return () => window.clearTimeout(timeout);
+  }, [isNavigating, pathname]);
 
   return (
     <NavigationContext.Provider value={{ isNavigating, startNavigation }}>
@@ -68,16 +76,16 @@ export function useNavigationLoading() {
 export function ContentSpinner({ label }: { label: string }) {
   return (
     <div
-      className="flex min-h-[50vh] flex-col items-center justify-center gap-3 text-sm font-medium text-[var(--color-text)]"
+      className="flex flex-col items-center justify-center gap-4 py-16"
       role="status"
       aria-live="polite"
       aria-busy="true"
     >
       <div
-        className="h-10 w-10 animate-spin rounded-full border-[3px] border-[var(--color-accent-muted)] border-t-[var(--color-accent)]"
+        className="h-12 w-12 animate-spin rounded-full border-4 border-[#d4e5dc] border-t-[#2d6a4f]"
         aria-hidden
       />
-      {label}
+      <p className="text-base font-medium text-[var(--color-text,#1a1a1a)]">{label}</p>
     </div>
   );
 }

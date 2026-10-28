@@ -73,6 +73,8 @@ export function SupabaseStoreProvider({ children }: { children: ReactNode }) {
         ...rest,
       }));
       setUserId(uid);
+    } catch {
+      /* keep partial/session data; still unblock UI */
     } finally {
       if (gen === hydrateGen.current) setDataReady(true);
     }

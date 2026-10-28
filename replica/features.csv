@@ -1,0 +1,45 @@
+feature,area,priority,original,clone,notes
+Register with full name username email password,auth,must,yes,yes,localStorage demo or Supabase Auth when env set
+Login with username and password,auth,must,yes,yes,username or email; Supabase resolves username via RPC when configured
+Logout,auth,must,yes,yes,Supabase signOut when configured
+Auth gate redirect to login,auth,must,yes,yes,
+Create harvest season with name start end,seasons,must,yes,yes,
+Edit and delete season,seasons,must,yes,yes,
+Activate a season (single active),seasons,must,yes,yes,
+Block season-scoped pages when no active season,seasons,must,yes,yes,
+CRUD fields (name location area tree_count),fields,must,yes,yes,
+Field detail card with harvest history and season filter,fields,should,yes,yes,
+CRUD harvests linked to field and active season,harvests,must,yes,yes,
+Auto-fill olives kg from crates times 22.5,harvests,must,yes,yes,
+CRUD mill processing (crates olives oil expenses),mill,must,yes,yes,
+Auto-fill mill olives kg from crates times 22.5,mill,must,yes,yes,
+Show oil liters as kg times 1.1 and yield ratio,mill,must,yes,yes,
+CRUD oil sales with liters price total buyer notes,sales,must,yes,yes,amounts in cents
+Oil sale delivered and paid toggles,sales,must,yes,yes,
+Customer autocomplete on oil sale,sales,must,yes,yes,
+Free oil (zero price) counted separately in inventory,sales,should,yes,yes,dashboard stats
+CRUD olive sales with kg price total buyer notes,sales,must,yes,yes,
+Olive sale delivered and paid toggles,sales,must,yes,yes,
+Customer autocomplete on olive sale,sales,must,yes,yes,
+CRUD customers (name phone),customers,must,yes,yes,
+Customer card with purchase history and totals,customers,should,yes,yes,
+CRUD transactions income expense donation,finance,must,yes,yes,
+Dashboard stats harvest mill oil sales remaining stock,dashboard,must,yes,yes,
+Dashboard season switcher,dashboard,must,yes,yes,
+Harvests by field bar chart,dashboard,must,yes,yes,Recharts
+Income vs expenses chart,dashboard,must,yes,yes,
+Remaining oil calc with L/kg conversion and prior inventory,dashboard,must,yes,yes,
+Oil yield by season analytics chart,analytics,should,yes,yes,
+Field crates by season analytics with field filter,analytics,should,yes,yes,
+Sidebar navigation with sales submenu,shell,must,yes,yes,
+Mobile burger menu and responsive layout,shell,must,yes,yes,
+Mobile card list instead of tables under 768px,shell,should,yes,yes,
+Toast alerts for success and errors,shell,should,yes,yes,
+Greek UI copy and el-GR date currency format,i18n,must,yes,yes,fresh copy
+Olive brand colors and logo,brand,should,yes,partial,token accent olive; custom Ω mark not original PNG
+Manual oil_inventory CRUD UI,inventory,could,no,no,schema ready; UI deferred
+Multi-user team sharing one farm,collab,could,no,no,
+Public read-only farm report page,sharing,could,no,no,
+Export CSV of harvests or sales,export,could,no,no,
+Copy PHP session auth as-is,auth,skip,yes,skip,Supabase Auth planned
+Ship original DB credentials or PHP code,security,skip,yes,skip,clean-room Next rewrite

@@ -1,0 +1,19 @@
+WCAG contrast check — replica/design/tokens.json
+Command: python3 replica/design/contrast.py replica/design/tokens.json
+Date: 2026-10-28
+
+  AAA   16.73:1  text                     on bg
+  AAA   17.49:1  text                     on surface
+  AAA    7.30:1  text-muted               on bg
+  AAA    7.63:1  text-muted               on surface
+  AAA    7.82:1  on-accent                on accent
+  AAA    7.49:1  accent                   on bg
+  AA     6.19:1  danger                   on bg
+  AA     6.82:1  success                  on bg
+  AA     4.81:1  warning                  on bg
+  AA     6.41:1  info                     on bg
+  PASS   4.63:1  border-input             on bg                   ui
+  AAA    6.62:1  accent                   on accent-muted         large
+  AAA   14.81:1  text                     on accent-muted
+
+13 pairs, 0 failing AA

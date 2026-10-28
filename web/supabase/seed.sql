@@ -1,0 +1,10 @@
+-- OHM optional seed (no fake PII — do not commit real people here)
+--
+-- Local demo mode: sample season/fields/harvests are created in the browser
+-- after first registration (see src/lib/data/local-provider.tsx).
+--
+-- Supabase mode:
+--   1. Register through the app (profile row is created by auth trigger).
+--   2. Create your first season in UI (Seasons page), or
+--   3. After you are authenticated, run custom INSERT statements here in the
+--      SQL editor for your own user_id (never ship third-party personal data).

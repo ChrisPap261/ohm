@@ -20,10 +20,10 @@ export default function LoginPage() {
     if (ready && profile) router.replace("/dashboard");
   }, [ready, profile, router]);
 
-  function onSubmit(e: FormEvent) {
+  async function onSubmit(e: FormEvent) {
     e.preventDefault();
     setLoading(true);
-    const result = login({ usernameOrEmail, password });
+    const result = await login({ usernameOrEmail, password });
     setLoading(false);
     if (!result.ok) {
       toast(result.error, "danger");

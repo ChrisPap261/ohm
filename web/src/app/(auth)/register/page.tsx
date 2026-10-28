@@ -23,14 +23,14 @@ export default function RegisterPage() {
     if (ready && profile) router.replace("/dashboard");
   }, [ready, profile, router]);
 
-  function onSubmit(e: FormEvent) {
+  async function onSubmit(e: FormEvent) {
     e.preventDefault();
     if (password !== passwordConfirm) {
       toast("Οι κωδικοί δεν ταιριάζουν.", "danger");
       return;
     }
     setLoading(true);
-    const result = register({ fullName, username, email, password });
+    const result = await register({ fullName, username, email, password });
     setLoading(false);
     if (!result.ok) {
       toast(result.error, "danger");

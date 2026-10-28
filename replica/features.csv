@@ -1,7 +1,7 @@
 feature,area,priority,original,clone,notes
-Register with full name username email password,auth,must,yes,yes,local store; Supabase later
-Login with username and password,auth,must,yes,yes,username or email
-Logout,auth,must,yes,yes,
+Register with full name username email password,auth,must,yes,yes,localStorage demo or Supabase Auth when env set
+Login with username and password,auth,must,yes,yes,username or email; Supabase resolves username via RPC when configured
+Logout,auth,must,yes,yes,Supabase signOut when configured
 Auth gate redirect to login,auth,must,yes,yes,
 Create harvest season with name start end,seasons,must,yes,yes,
 Edit and delete season,seasons,must,yes,yes,

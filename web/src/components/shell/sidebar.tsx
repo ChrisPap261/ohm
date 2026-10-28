@@ -19,6 +19,7 @@ import {
   Wallet,
   X,
 } from "lucide-react";
+import { useNavigationLoading } from "@/components/shell/navigation-loading";
 import { useStore } from "@/lib/store";
 import { Button } from "@/components/ui/button";
 
@@ -43,9 +44,15 @@ const links = [
 
 function NavLinks({ onNavigate }: { onNavigate?: () => void }) {
   const pathname = usePathname();
+  const { startNavigation } = useNavigationLoading();
   const [salesOpen, setSalesOpen] = useState(
     pathname.startsWith("/sales"),
   );
+
+  const onNavClick = (href: string) => {
+    onNavigate?.();
+    startNavigation(href);
+  };
 
   return (
     <nav aria-label="Κύριο μενού">
@@ -76,7 +83,7 @@ function NavLinks({ onNavigate }: { onNavigate?: () => void }) {
                           <Link
                             href={child.href}
                             aria-current={active ? "page" : undefined}
-                            onClick={onNavigate}
+                            onClick={() => onNavClick(child.href)}
                             className={`flex items-center gap-2 rounded-[var(--radius-md)] px-3 py-2 text-sm ${
                               active
                                 ? "bg-[var(--color-accent-muted)] font-semibold text-[var(--color-accent)]"
@@ -102,7 +109,7 @@ function NavLinks({ onNavigate }: { onNavigate?: () => void }) {
               <Link
                 href={href}
                 aria-current={active ? "page" : undefined}
-                onClick={onNavigate}
+                onClick={() => onNavClick(href)}
                 className={`flex items-center gap-3 rounded-[var(--radius-md)] px-3 py-2.5 text-sm ${
                   active
                     ? "bg-[var(--color-accent-muted)] font-semibold text-[var(--color-accent)]"
@@ -130,6 +137,7 @@ function BrandMark() {
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const { profile, logout, activeSeason } = useStore();
+  const { startNavigation } = useNavigationLoading();
   const [open, setOpen] = useState(false);
 
   return (
@@ -155,7 +163,14 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           open ? "translate-x-0" : "-translate-x-full"
         }`}
       >
-        <Link href="/dashboard" className="mb-6 flex items-center gap-3 border-b border-[var(--color-border)] pb-4" onClick={() => setOpen(false)}>
+        <Link
+          href="/dashboard"
+          className="mb-6 flex items-center gap-3 border-b border-[var(--color-border)] pb-4"
+          onClick={() => {
+            setOpen(false);
+            startNavigation("/dashboard");
+          }}
+        >
           <BrandMark />
           <div>
             <div className="font-[family-name:var(--font-display)] font-semibold">OHM</div>

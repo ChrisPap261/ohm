@@ -1,8 +1,12 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import { AppShell } from "@/components/shell/sidebar";
+import {
+  ContentSpinner,
+  useNavigationLoading,
+} from "@/components/shell/navigation-loading";
 import { useStore } from "@/lib/store";
 
 function SkeletonBar({
@@ -75,6 +79,7 @@ export function ContentLoading({ label }: { label: string }) {
 /** App shell with sidebar; content shows skeleton until session + data are ready. */
 export function AppContentGate({ children }: { children: React.ReactNode }) {
   const { ready, profile, dataReady } = useStore();
+  const { isNavigating } = useNavigationLoading();
   const router = useRouter();
 
   useEffect(() => {
@@ -84,16 +89,15 @@ export function AppContentGate({ children }: { children: React.ReactNode }) {
   const loadingLabel =
     !ready ? "Φόρτωση…" : !profile ? "Ανακατεύθυνση…" : "Φόρτωση δεδομένων…";
 
-  const showContentLoading =
+  const showDataLoading =
     !ready || !profile || (profile !== null && !dataReady);
 
-  return (
-    <AppShell>
-      {showContentLoading ? (
-        <ContentLoading label={loadingLabel} />
-      ) : (
-        children
-      )}
-    </AppShell>
-  );
+  let body: ReactNode = children;
+  if (showDataLoading) {
+    body = <ContentLoading label={loadingLabel} />;
+  } else if (isNavigating) {
+    body = <ContentSpinner label="Φόρτωση σελίδας…" />;
+  }
+
+  return <AppShell>{body}</AppShell>;
 }

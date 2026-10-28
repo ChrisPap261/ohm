@@ -187,8 +187,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           <Button
             variant="secondary"
             className="w-full"
-            onClick={() => {
-              logout();
+            onClick={async () => {
+              await logout();
               window.location.href = "/login";
             }}
           >

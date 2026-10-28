@@ -34,6 +34,13 @@ export async function updateSession(request: NextRequest) {
     },
   );
 
-  await supabase.auth.getUser();
+  const hasAuthCookie = request.cookies
+    .getAll()
+    .some(({ name }) => name.includes("-auth-token"));
+
+  if (hasAuthCookie) {
+    await supabase.auth.getUser();
+  }
+
   return supabaseResponse;
 }

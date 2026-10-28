@@ -154,6 +154,7 @@ export function LocalStoreProvider({ children }: { children: ReactNode }) {
 
     return {
       ready,
+      dataReady: true,
       data,
       profile,
       activeSeason,

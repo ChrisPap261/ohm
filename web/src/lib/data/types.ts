@@ -32,7 +32,10 @@ export type DashboardStats = {
 export type AuthResult = { ok: true } | { ok: false; error: string };
 
 export type StoreApi = {
+  /** Auth/session resolved (safe to show shell or auth pages). */
   ready: boolean;
+  /** Full app dataset loaded (Supabase background fetch complete). */
+  dataReady: boolean;
   data: AppData;
   profile: Profile | null;
   activeSeason: Season | null;

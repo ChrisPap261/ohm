@@ -1,12 +1,6 @@
 "use client";
 
-import {
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-  type ReactNode,
-} from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { resolveLoginEmail } from "@/lib/auth/actions";
 import { StoreContextProvider } from "@/lib/data/context";
 import {
@@ -37,53 +31,15 @@ import {
   computeOilYieldBySeason,
   searchCustomersList,
 } from "@/lib/data/stats";
+import {
+  fetchCoreAppData,
+  fetchFullAppData,
+  fetchRemainingAppData,
+  profileFromAuthUser,
+} from "@/lib/data/fetch-app-data";
 import { emptyData, type StoreApi } from "@/lib/data/types";
 import { createClient } from "@/lib/supabase/client";
 import type { AppData, Profile } from "@/lib/types";
-
-async function fetchAppData(userId: string): Promise<AppData> {
-  const supabase = createClient();
-  const [
-    profileRes,
-    seasonsRes,
-    fieldsRes,
-    harvestsRes,
-    millRes,
-    oilInvRes,
-    customersRes,
-    oilSalesRes,
-    oliveSalesRes,
-    txsRes,
-  ] = await Promise.all([
-    supabase.from("profiles").select("*").eq("id", userId).maybeSingle(),
-    supabase
-      .from("seasons")
-      .select("*")
-      .eq("user_id", userId)
-      .order("created_at"),
-    supabase.from("fields").select("*").eq("user_id", userId),
-    supabase.from("harvests").select("*").eq("user_id", userId),
-    supabase.from("mill_processing").select("*").eq("user_id", userId),
-    supabase.from("oil_inventory").select("*").eq("user_id", userId),
-    supabase.from("customers").select("*").eq("user_id", userId),
-    supabase.from("oil_sales").select("*").eq("user_id", userId),
-    supabase.from("olive_sales").select("*").eq("user_id", userId),
-    supabase.from("transactions").select("*").eq("user_id", userId),
-  ]);
-
-  return {
-    profile: profileRes.data ? mapProfile(profileRes.data) : null,
-    seasons: (seasonsRes.data ?? []).map(mapSeason),
-    fields: (fieldsRes.data ?? []).map(mapField),
-    harvests: (harvestsRes.data ?? []).map(mapHarvest),
-    mill: (millRes.data ?? []).map(mapMill),
-    oilInventory: (oilInvRes.data ?? []).map(mapOilInventory),
-    customers: (customersRes.data ?? []).map(mapCustomer),
-    oilSales: (oilSalesRes.data ?? []).map(mapOilSale),
-    oliveSales: (oliveSalesRes.data ?? []).map(mapOliveSale),
-    transactions: (txsRes.data ?? []).map(mapTx),
-  };
-}
 
 function authErrorMessage(message: string): string {
   if (message.toLowerCase().includes("invalid login credentials")) {
@@ -97,13 +53,37 @@ function authErrorMessage(message: string): string {
 
 export function SupabaseStoreProvider({ children }: { children: ReactNode }) {
   const [ready, setReady] = useState(false);
+  const [dataReady, setDataReady] = useState(true);
   const [data, setData] = useState<AppData>(emptyData);
   const [userId, setUserId] = useState<string | null>(null);
+  const hydrateGen = useRef(0);
+
+  const hydrateInBackground = useCallback(async (uid: string) => {
+    const gen = ++hydrateGen.current;
+    setDataReady(false);
+    try {
+      const [core, rest] = await Promise.all([
+        fetchCoreAppData(uid),
+        fetchRemainingAppData(uid),
+      ]);
+      if (gen !== hydrateGen.current) return;
+      setData((prev) => ({
+        ...prev,
+        ...core,
+        ...rest,
+      }));
+      setUserId(uid);
+    } finally {
+      if (gen === hydrateGen.current) setDataReady(true);
+    }
+  }, []);
 
   const reload = useCallback(async (uid: string) => {
-    const next = await fetchAppData(uid);
+    setDataReady(false);
+    const next = await fetchFullAppData(uid);
     setData(next);
     setUserId(uid);
+    setDataReady(true);
   }, []);
 
   useEffect(() => {
@@ -116,22 +96,36 @@ export function SupabaseStoreProvider({ children }: { children: ReactNode }) {
       } = await supabase.auth.getSession();
       if (cancelled) return;
       if (session?.user) {
-        await reload(session.user.id);
+        const uid = session.user.id;
+        setUserId(uid);
+        setData((prev) => ({
+          ...prev,
+          profile: profileFromAuthUser(session.user),
+        }));
+        setReady(true);
+        void hydrateInBackground(uid);
       } else {
         setData(emptyData());
         setUserId(null);
+        setDataReady(true);
+        setReady(true);
       }
-      if (!cancelled) setReady(true);
     })();
 
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
       if (session?.user) {
-        void reload(session.user.id);
+        setUserId(session.user.id);
+        setData((prev) => ({
+          ...prev,
+          profile: profileFromAuthUser(session.user),
+        }));
+        void hydrateInBackground(session.user.id);
       } else {
         setData(emptyData());
         setUserId(null);
+        setDataReady(true);
       }
     });
 
@@ -139,7 +133,7 @@ export function SupabaseStoreProvider({ children }: { children: ReactNode }) {
       cancelled = true;
       subscription.unsubscribe();
     };
-  }, [reload]);
+  }, [hydrateInBackground]);
 
   const api = useMemo<StoreApi>(() => {
     const profile =
@@ -165,6 +159,7 @@ export function SupabaseStoreProvider({ children }: { children: ReactNode }) {
 
     return {
       ready,
+      dataReady,
       data,
       profile,
       activeSeason,
@@ -226,6 +221,7 @@ export function SupabaseStoreProvider({ children }: { children: ReactNode }) {
         await supabase.auth.signOut();
         setData(emptyData());
         setUserId(null);
+        setDataReady(true);
       },
 
       saveSeason: (s) => {
@@ -685,7 +681,7 @@ export function SupabaseStoreProvider({ children }: { children: ReactNode }) {
       oilYieldBySeason: () => computeOilYieldBySeason(data),
       fieldCratesBySeason: () => computeFieldCratesBySeason(data),
     };
-  }, [data, ready, reload, userId]);
+  }, [data, dataReady, ready, reload, userId]);
 
   return <StoreContextProvider value={api}>{children}</StoreContextProvider>;
 }

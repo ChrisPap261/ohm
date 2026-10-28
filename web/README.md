@@ -26,11 +26,12 @@ Open [http://localhost:3000](http://localhost:3000). Registration seeds sample G
    cp .env.example .env.local
    ```
 
-4. Set in `.env.local` (from Supabase → Project Settings → API):
+4. Set in `.env.local` (from Supabase → Project Settings → API Keys):
 
    - `NEXT_PUBLIC_SUPABASE_URL`
-   - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
-   - Optional server-only: `SUPABASE_SERVICE_ROLE_KEY` (admin scripts; never expose to the browser)
+   - `NEXT_PUBLIC_SUPABASE_ANON_KEY` — use the **publishable** key (`sb_publishable_…`); legacy anon JWT also works
+   - Optional alias: `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` (same value; either name is enough)
+   - Optional server-only: `SUPABASE_SERVICE_ROLE_KEY` / secret key (admin scripts; never expose to the browser)
 
 5. Optional for local dev: **Authentication → Providers → Email** → turn off “Confirm email” so sign-up works immediately.
 

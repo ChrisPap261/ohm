@@ -115,7 +115,7 @@ export default function DashboardPage() {
           {byField.length === 0 ? (
             <p className="text-sm text-[var(--color-text-muted)]">Δεν υπάρχουν συγκομιδές ακόμα.</p>
           ) : (
-            <div className="h-[280px]" aria-hidden>
+            <div className="h-[280px]" role="img" aria-label="Ραβδόγραμμα κιλών ελιών ανά αγροτεμάχιο">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={byField}>
                   <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" />
@@ -134,7 +134,7 @@ export default function DashboardPage() {
           <p className="mb-4 text-sm text-[var(--color-text-muted)]">
             Συμπεριλαμβάνει πωλήσεις λαδιού και κόστος ελαιοτριβείου
           </p>
-          <div className="h-[280px]" aria-hidden>
+          <div className="h-[280px]" role="img" aria-label="Διάγραμμα εσόδων και εξόδων">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie data={financeData} dataKey="value" nameKey="name" innerRadius={60} outerRadius={100}>

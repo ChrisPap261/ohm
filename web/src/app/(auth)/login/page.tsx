@@ -69,7 +69,13 @@ export default function LoginPage() {
           </Button>
         </form>
 
-        <p className="mt-6 text-center text-sm text-[var(--color-text-muted)]">
+        <p className="mt-4 text-center text-sm">
+          <Link href="/forgot-password" className="text-[var(--color-accent)]">
+            Ξέχασες τον κωδικό;
+          </Link>
+        </p>
+
+        <p className="mt-4 text-center text-sm text-[var(--color-text-muted)]">
           Δεν έχεις λογαριασμό;{" "}
           <Link href="/register" className="font-medium text-[var(--color-accent)]">
             Δημιουργία

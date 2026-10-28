@@ -9,7 +9,7 @@ Backend for the Next.js clone: Supabase Auth + Postgres with row-level security.
 - [x] Logout (Supabase `signOut` + session cookies via `@supabase/ssr`)
 - [x] Session refresh in Next.js middleware when Supabase env is set
 - [ ] Email verification enforced in production (disable confirm only for local dev)
-- [ ] Password reset flow
+- [x] Password reset flow (`/forgot-password`, `/reset-password` via Supabase Auth email)
 - [ ] OAuth (Google / Apple) if needed later
 - [ ] Account deletion (GDPR / App Store)
 

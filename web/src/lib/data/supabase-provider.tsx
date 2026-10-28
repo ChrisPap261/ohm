@@ -53,7 +53,7 @@ function authErrorMessage(message: string): string {
 
 export function SupabaseStoreProvider({ children }: { children: ReactNode }) {
   const [ready, setReady] = useState(false);
-  const [dataReady, setDataReady] = useState(true);
+  const [dataReady, setDataReady] = useState(false);
   const [data, setData] = useState<AppData>(emptyData);
   const [userId, setUserId] = useState<string | null>(null);
   const hydrateGen = useRef(0);
@@ -97,6 +97,7 @@ export function SupabaseStoreProvider({ children }: { children: ReactNode }) {
       if (cancelled) return;
       if (session?.user) {
         const uid = session.user.id;
+        setDataReady(false);
         setUserId(uid);
         setData((prev) => ({
           ...prev,
@@ -114,8 +115,9 @@ export function SupabaseStoreProvider({ children }: { children: ReactNode }) {
 
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
+    } =     supabase.auth.onAuthStateChange((_event, session) => {
       if (session?.user) {
+        setDataReady(false);
         setUserId(session.user.id);
         setData((prev) => ({
           ...prev,

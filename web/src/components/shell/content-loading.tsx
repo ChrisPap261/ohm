@@ -12,7 +12,7 @@ function SkeletonBar({
 }) {
   return (
     <div
-      className={`animate-pulse rounded-[var(--radius-md)] bg-[var(--color-border)]/60 ${className}`}
+      className={`animate-pulse rounded-[var(--radius-md)] bg-[var(--color-accent-muted)] ${className}`}
       aria-hidden
     />
   );
@@ -20,7 +20,12 @@ function SkeletonBar({
 
 export function ContentLoading({ label }: { label: string }) {
   return (
-    <div role="status" aria-live="polite" aria-busy="true" className="space-y-6">
+    <div
+      role="status"
+      aria-live="polite"
+      aria-busy="true"
+      className="min-h-[50vh] space-y-6"
+    >
       <span className="sr-only">{label}</span>
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div className="space-y-2">
@@ -56,9 +61,9 @@ export function ContentLoading({ label }: { label: string }) {
         </div>
       </div>
 
-      <div className="flex items-center justify-center gap-2 pt-2 text-sm text-[var(--color-text-muted)]">
+      <div className="flex items-center justify-center gap-3 pt-4 text-sm font-medium text-[var(--color-text)]">
         <div
-          className="h-5 w-5 animate-spin rounded-full border-2 border-[var(--color-border)] border-t-[var(--color-accent)]"
+          className="h-6 w-6 animate-spin rounded-full border-2 border-[var(--color-accent-muted)] border-t-[var(--color-accent)]"
           aria-hidden
         />
         {label}
@@ -76,10 +81,11 @@ export function AppContentGate({ children }: { children: React.ReactNode }) {
     if (ready && !profile) router.replace("/login");
   }, [ready, profile, router]);
 
-  if (ready && !profile) return null;
+  const loadingLabel =
+    !ready ? "Φόρτωση…" : !profile ? "Ανακατεύθυνση…" : "Φόρτωση δεδομένων…";
 
-  const loadingLabel = !ready ? "Φόρτωση…" : "Φόρτωση δεδομένων…";
-  const showContentLoading = !ready || !dataReady;
+  const showContentLoading =
+    !ready || !profile || (profile !== null && !dataReady);
 
   return (
     <AppShell>
